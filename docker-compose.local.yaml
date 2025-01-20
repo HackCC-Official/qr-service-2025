@@ -8,7 +8,16 @@ services:
       - '3000:3000'
     volumes:
     - .:/usr/src/app
-    - ./thomas/src/app/node_modules
     # Run in Debug Mode: npm run start:debug --> Don't forget to start your vscode debugger!
     # Run in dev Mode: npm run start:dev
     command: npm run start:dev
+  postgres:
+    image: postgres
+    restart: always
+    env_file: '.env.local'
+    environment:
+      POSTGRES_INITDB_ARGS: "-c max_prepared_transactions=100"
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./postgres-data:/data/postgres
