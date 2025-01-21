@@ -42,4 +42,12 @@ export class EventService {
       .where(eq(schema.events.id, eventId))
       .returning();
   }
+
+  async delete(eventId: string) {
+    return this
+      .db
+      .delete(schema.events)
+      .where(eq(schema.events.id, eventId))
+      .returning();
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
 import { EventService } from "./event.provider";
 import { RequestEventDTO } from "src/drizzle/schema/event";
 
@@ -32,7 +32,13 @@ export class EventController {
     @Param('id') id: string,
     @Body() updateEventDTO: RequestEventDTO
   ) {
-    console.log(id, updateEventDTO)
     return this.eventService.update(id, updateEventDTO);
+  }
+
+  @Delete(":id")
+  delete(
+    @Param('id') id: string
+  ) {
+    return this.eventService.delete(id);
   }
 }
