@@ -6,9 +6,12 @@ export const events = pgTable('events', {
   date: date(),
   startingTime: timestamp(),
   lateTime: timestamp(),
-  endignTime: timestamp(),
+  endingTime: timestamp(),
   active: boolean(),
   breakfast: boolean(),
   lunch: boolean(),
   dinner: boolean(),
 })
+
+export type ResponseEventDto = typeof events.$inferSelect;
+export type RequestEventDto = typeof events.$inferInsert;
