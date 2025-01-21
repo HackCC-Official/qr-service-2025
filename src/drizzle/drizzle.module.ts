@@ -14,7 +14,8 @@ import { drizzle } from 'drizzle-orm/node-postgres';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
         const pool = new Pool({
-          connectionString: configService.get('DATABASE_URL') || 'postgresql://postgres:5133',
+          host: configService.get('DATABASE_HOST') || 'postgres',
+          port: Number(configService.get('DATABASE_PORT')) || 5432,
           user: configService.get('DATABASE_USER') || 'postgres',
           password: configService.get('DATABASE_PASSWORD') || 'password',
           database: configService.get('DATABASE_DB') || 'qr-service-db',

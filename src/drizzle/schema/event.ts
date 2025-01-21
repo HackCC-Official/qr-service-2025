@@ -13,5 +13,5 @@ export const events = pgTable('events', {
   dinner: boolean(),
 })
 
-export type ResponseEventDto = typeof events.$inferSelect;
-export type RequestEventDto = typeof events.$inferInsert;
+export type ResponseEventDTO = typeof events.$inferSelect;
+export type RequestEventDTO = typeof events.$inferInsert;
