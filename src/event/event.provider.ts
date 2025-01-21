@@ -27,11 +27,19 @@ export class EventService {
   }
 
   async create(createEventDTO: RequestEventDTO) {
-    console.log(createEventDTO)
     return this
       .db
       .insert(schema.events)
       .values(createEventDTO)
+      .returning();
+  }
+
+  async update(eventId: string, updateEventDTO: RequestEventDTO) {
+    return this
+      .db
+      .update(schema.events)
+      .set(updateEventDTO)
+      .where(eq(schema.events.id, eventId))
       .returning();
   }
 }
