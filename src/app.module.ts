@@ -4,7 +4,8 @@ import { AppService } from './app.service';
 import { DrizzleModule } from './drizzle/drizzle.module';
 import { EventModule } from './event/event.module';
 import { LoggerModule } from 'nestjs-pino';
-import { MinioModule } from './minio/minio.module';
+import { MinioModule } from './minio-s3/minio.module';
+import { QRModule } from './qr/qr.module';
 
 @Module({
   imports: [
@@ -19,7 +20,8 @@ import { MinioModule } from './minio/minio.module';
     }), 
     DrizzleModule, 
     EventModule,
-    MinioModule
+    MinioModule,
+    QRModule
   ],
   controllers: [AppController],
   providers: [AppService],

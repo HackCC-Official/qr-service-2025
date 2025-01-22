@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { NestMinioModule } from "nestjs-minio";
+import { MinioService } from "./minio.service";
 
 @Module({
   imports: [
@@ -11,6 +12,8 @@ import { NestMinioModule } from "nestjs-minio";
       accessKey: process.env.MINIO_ACCESS_KEY,
       secretKey: process.env.MINIO_ACCESS_SECRET,
     })
-  ]
+  ],
+  providers: [MinioService],
+  exports: [MinioService]
 })
 export class MinioModule {}
