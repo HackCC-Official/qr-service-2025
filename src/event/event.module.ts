@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Logger, Module } from "@nestjs/common";
 import { EventController } from "./event.controller";
 import { EventService } from "./event.provider";
 import { DrizzleModule } from "src/drizzle/drizzle.module";
