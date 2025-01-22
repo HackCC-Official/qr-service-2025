@@ -29,7 +29,7 @@ Please use the following extension in order to comply to the project's stand
 ### Installation
 At the location of where you want to place this project at, clone the repository using the command below
 ```bash
-git clone git@github.com:Indraneers/karas-frontend.git
+git clone git@github.com:HackCC-Official/qr-service-2025.git
 ```
 
 Then enter directory and install the dependencies

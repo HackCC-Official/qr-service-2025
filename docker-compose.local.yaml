@@ -21,3 +21,12 @@ services:
       - '5433:5432'
     volumes:
       - ./postgres-data:/data/postgres
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    env_file: '.env.local'
+    volumes:
+      - ./minio/data:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
