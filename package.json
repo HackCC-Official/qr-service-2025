@@ -28,6 +28,7 @@
     "class-validator": "^0.14.1",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.38.4",
+    "nestjs-minio": "^2.6.2",
     "nestjs-pino": "^4.3.0",
     "pg": "^8.13.1",
     "pino-http": "^10.4.0",
