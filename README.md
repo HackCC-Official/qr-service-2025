@@ -49,12 +49,12 @@ Before running the application locally, make sure to create a `.env.local` file 
 
 To run the application locally, use docker-compose to create a container of it
 ```bash
-docker-compose -f docker-compose.local.yaml up -d
+npm run start:docker
 ```
 
 in some cases, such as environmental variable changes, you probably want to rebuild the container
 ```bash
-docker-compose -f docker-compose.local.yaml up -d --build
+npm run start:rebuild
 ```
 
 Having the [Docker desktop](https://www.docker.com/) application will help immensely in this project

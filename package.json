@@ -11,6 +11,8 @@
     "start": "nest start",
     "start:dev": "nest start --tsc --watch",
     "start:debug": "nest start --debug --watch",
+    "start:docker": "docker-compose -f docker-compose.local.yaml --env-file .env.local up -d",
+    "start:rebuild": "docker-compose -f docker-compose.local.yaml --env-file .env.local up -d --build",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

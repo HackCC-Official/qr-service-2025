@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile.local
     env_file: '.env.local'
     ports:
-      - '3000:3000'
+      - '${PORT}:3000'
     volumes:
     - .:/usr/src/app
     # Run in Debug Mode: npm run start:debug --> Don't forget to start your vscode debugger!
