@@ -7,10 +7,10 @@ export class QrController {
     private qrService: QRService
   ) {}
 
-  @Post(':id')
-  async createQrCode(
-    @Param('id') userId: string
-  ) {
-    return this.qrService.generateQRCode(userId);
-  }
+  // @Post(':id')
+  // async createQrCode(
+  //   @Param('id') userId: string
+  // ) {
+  //   return this.qrService.generateQRCode(userId);
+  // }
 }
