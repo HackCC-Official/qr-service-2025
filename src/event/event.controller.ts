@@ -1,5 +1,5 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
-import { EventService } from "./event.provider";
+import { EventService } from "./event.service";
 import { RequestEventDTO } from "src/drizzle/schema/event";
 
 @Controller('events')

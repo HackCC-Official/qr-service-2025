@@ -7,6 +7,13 @@ export class QrController {
     private qrService: QRService
   ) {}
 
+  @Get(':id')
+  findById(
+    @Param('id') id: string
+  ) {
+    return this.qrService.findById(id);
+  }
+
   // @Post(':id')
   // async createQrCode(
   //   @Param('id') userId: string
