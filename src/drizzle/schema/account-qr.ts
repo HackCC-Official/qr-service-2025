@@ -6,5 +6,5 @@ export const accountQRs = pgTable('account-qrs', {
   account_id: varchar(),
 })
 
-export type ResponseQRAccountDTO = typeof accountQRs.$inferSelect;
-export type RequestQRAccountDTO = typeof accountQRs.$inferInsert;
+export type ResponseAccountQRDTO = typeof accountQRs.$inferSelect;
+export type RequestAccountQRDTO = typeof accountQRs.$inferInsert;

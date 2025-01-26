@@ -7,11 +7,11 @@ export class QrController {
     private qrService: QRService
   ) {}
 
-  @Get(':id')
-  findById(
-    @Param('id') id: string
+  @Get(':account_id')
+  findByAccountId(
+    @Param('account_id') id: string
   ) {
-    return this.qrService.findById(id);
+    return this.qrService.findByAccountId(id);
   }
 
   // @Post(':id')

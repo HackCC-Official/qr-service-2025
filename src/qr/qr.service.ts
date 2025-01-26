@@ -7,6 +7,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { schema } from "src/drizzle/schema";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { eq } from "drizzle-orm";
+import { RequestAccountQRDTO } from "src/drizzle/schema/account-qr";
 
 @Injectable()
 export class QRService {
@@ -17,13 +18,6 @@ export class QRService {
     private readonly logger: PinoLogger,
     private minioService: MinioService,
   ) {}
-
-  async findById(id: string) {
-    return this.db
-      .query
-      .accountQRs
-      .findFirst({ where: eq(schema.events.id, id) });
-  }
 
   generateFilename(userId: string) {
     const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, '');
@@ -37,5 +31,22 @@ export class QRService {
     await this.minioService.uploadImg(qrCodeFilename, qrCodeBuffer);
 
     return process.env.MINIO_BUCKET_NAME + qrCodeFilename;
+  }
+
+  async findByAccountId(accountId: string) {
+    return this.db
+      .query
+      .accountQRs
+      .findFirst({ where: eq(schema.accountQRs.account_id, accountId) });
+  }
+
+  async create(createAccountQRDTO: RequestAccountQRDTO) {
+    const accountQR = await this
+      .db
+      .insert(schema.accountQRs)
+      .values(createAccountQRDTO)
+      .returning();
+
+    this.logger.info({ msg: 'Creating QR Code for Account ID: ' + accountQR[0].account_id, accountQR });
   }
 }
