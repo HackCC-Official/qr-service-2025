@@ -6,6 +6,8 @@ import { EventModule } from './event/event.module';
 import { LoggerModule } from 'nestjs-pino';
 import { MinioModule } from './minio-s3/minio.module';
 import { QRModule } from './qr/qr.module';
+import { AccountConsumerModule } from './account-consumer/account-consumer.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -18,10 +20,15 @@ import { QRModule } from './qr/qr.module';
         },
       },
     }), 
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', '.env.local']
+    }),
     DrizzleModule, 
     EventModule,
     MinioModule,
-    QRModule
+    QRModule,
+    AccountConsumerModule
   ],
   controllers: [AppController],
   providers: [AppService],

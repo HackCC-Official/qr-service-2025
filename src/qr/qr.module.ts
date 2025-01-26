@@ -7,6 +7,7 @@ import { DrizzleModule } from "src/drizzle/drizzle.module";
 @Module({
   imports: [MinioModule, DrizzleModule],
   providers: [QRService],
-  controllers: [QrController]
+  controllers: [QrController],
+  exports: [QRService]
 })
 export class QRModule {}

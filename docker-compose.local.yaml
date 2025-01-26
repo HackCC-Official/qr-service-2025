@@ -11,6 +11,8 @@ services:
     # Run in Debug Mode: npm run start:debug --> Don't forget to start your vscode debugger!
     # Run in dev Mode: npm run start:dev
     command: npm run start:dev
+    networks:
+      - hackcc-network
   postgres:
     image: postgres
     restart: always
@@ -21,6 +23,8 @@ services:
       - '5433:5432'
     volumes:
       - ./postgres-data:/data/postgres
+    networks:
+    - hackcc-network
   minio:
     image: quay.io/minio/minio
     command: server /data --console-address ":9001"
@@ -30,3 +34,8 @@ services:
     ports:
       - 9000:9000
       - 9001:9001
+    networks:
+      - hackcc-network
+networks:
+  hackcc-network:
+    external: true
