@@ -1,17 +1,19 @@
 import { Controller, Get, Param, Post } from "@nestjs/common";
-import { QRService } from "./qr.service";
+import { QRCodeService } from "./qr-code.service";
+import { ApiTags } from "@nestjs/swagger";
 
-@Controller('qr-code')
-export class QrController {
+@ApiTags('QR Codes')
+@Controller('qr-codes')
+export class QrCodeController {
   constructor(
-    private qrService: QRService
+    private qrCodeService: QRCodeService
   ) {}
 
   @Get(':account_id')
   findByAccountId(
     @Param('account_id') id: string
   ) {
-    return this.qrService.findByAccountId(id);
+    return this.qrCodeService.findByAccountId(id);
   }
 
   // @Post(':id')

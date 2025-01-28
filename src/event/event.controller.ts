@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
 import { EventService } from "./event.service";
 import { RequestEventDTO } from "src/drizzle/schema/event";
+import { EventQuery } from "./event-query.type";
 
 @Controller('events')
 export class EventController {
@@ -9,7 +10,10 @@ export class EventController {
   ) {}
 
   @Get()
-  findAll() {
+  findAll(
+    @Query() { date } : EventQuery
+  ) {
+    if (date) return this.eventService.findByDate(date);
     return this.eventService.findAll();
   }
 

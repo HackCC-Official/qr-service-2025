@@ -29,6 +29,13 @@ export class EventService {
       .findFirst({ where: eq(schema.events.id, id) });
   }
 
+  async findByDate(date: string) {
+    return this.db
+      .query
+      .events
+      .findFirst({ where: eq(schema.events.date, date) });
+  }
+
   async create(createEventDTO: RequestEventDTO) {
     const event = await this
       .db

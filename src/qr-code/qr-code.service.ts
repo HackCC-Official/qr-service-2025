@@ -1,5 +1,4 @@
 import { Inject, Injectable } from "@nestjs/common";
-import { MinioModule } from "src/minio-s3/minio.module";
 import * as QRCode from "qrcode";
 import { MinioService } from "src/minio-s3/minio.service";
 import { PG_CONNECTION } from "src/constants";
@@ -10,11 +9,11 @@ import { eq } from "drizzle-orm";
 import { RequestAccountQRDTO } from "src/drizzle/schema/account-qr";
 
 @Injectable()
-export class QRService {
+export class QRCodeService {
   constructor(
     @Inject(PG_CONNECTION)
     private db: NodePgDatabase<typeof schema>,
-    @InjectPinoLogger(QRService.name)
+    @InjectPinoLogger(QRCodeService.name)
     private readonly logger: PinoLogger,
     private minioService: MinioService,
   ) {}
@@ -48,5 +47,12 @@ export class QRService {
       .returning();
 
     this.logger.info({ msg: 'Creating QR Code for Account ID: ' + accountQR[0].account_id, accountQR });
+  }
+
+  async deleteByAccountId(accountId: string) {
+    return this.db
+      .delete(schema.accountQRs)
+      .where(eq(schema.accountQRs.account_id, accountId))
+      .returning();
   }
 }
