@@ -1,0 +1,38 @@
+services:
+  qr-service:
+    image: "ghcr.io/hackcc-official/qr-service-2025:latest"
+    build:
+      context: .
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    ports:
+      - ${PORT}:3000
+    networks:
+      - hackcc-network
+  postgres:
+    image: postgres
+    restart: always
+    env_file: '.env'
+    environment:
+      POSTGRES_INITDB_ARGS: "-c max_prepared_transactions=100"
+    ports:
+      - '5433:5432'
+    volumes:
+      - ./postgres-data:/data/postgres
+    networks:
+    - hackcc-network
+  minio:
+    image: quay.io/minio/minio
+    command: server /data --console-address ":9001"
+    env_file: '.env'
+    volumes:
+      - ./minio/data:/data
+    ports:
+      - 9000:9000
+      - 9001:9001
+    networks:
+      - hackcc-network
+networks:
+  hackcc-network:
+    external: true
