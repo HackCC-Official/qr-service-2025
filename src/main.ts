@@ -12,8 +12,6 @@ async function bootstrap() {
     .setTitle('QR Service')
     .setDescription('QR Service API Documentation')
     .setVersion('0.1')
-    .addTag('qr')
-    .addTag('account')
     .build()
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
