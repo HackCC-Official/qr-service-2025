@@ -3,7 +3,7 @@ import { DrizzleModule } from './drizzle/drizzle.module';
 import { EventModule } from './event/event.module';
 import { LoggerModule } from 'nestjs-pino';
 import { MinioModule } from './minio-s3/minio.module';
-import { QRModule } from './qr-code/qr-code.module';
+import { QRCodeModule } from './qr-code/qr-code.module';
 import { AccountConsumerModule } from './account-consumer/account-consumer.module';
 import { ConfigModule } from '@nestjs/config';
 
@@ -25,7 +25,7 @@ import { ConfigModule } from '@nestjs/config';
     DrizzleModule, 
     EventModule,
     MinioModule,
-    QRModule,
+    QRCodeModule,
     AccountConsumerModule
   ],
 })
