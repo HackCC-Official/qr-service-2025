@@ -3,7 +3,7 @@ import { ConfigService } from "@nestjs/config";
 import amqp, { ChannelWrapper, Channel } from 'amqp-connection-manager';
 import { ConfirmChannel } from "amqplib";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import { QRService } from "src/qr/qr.service";
+import { QRService } from "src/qr-code/qr-code.service";
 import { Account } from "./account";
 
 @Injectable()

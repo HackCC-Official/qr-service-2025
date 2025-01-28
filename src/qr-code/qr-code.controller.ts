@@ -1,7 +1,7 @@
 import { Controller, Get, Param, Post } from "@nestjs/common";
-import { QRService } from "./qr.service";
+import { QRService } from "./qr-code.service";
 
-@Controller('qr-code')
+@Controller('qr-codes')
 export class QrController {
   constructor(
     private qrService: QRService
