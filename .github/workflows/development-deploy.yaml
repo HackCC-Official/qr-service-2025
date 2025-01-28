@@ -40,6 +40,16 @@ jobs:
           remote_user: ${{ secrets.SSH_USERNAME }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
+      - name: rsync drizzle.config.ts
+        uses: burnett01/rsync-deployments@5.2.1
+        with:
+          switches: -avzr --delete
+          path: drizzle.config.ts
+          remote_path: qr-service-2025
+          remote_host: ${{ secrets.SSH_DEV_HOST }}
+          remote_user: ${{ secrets.SSH_USERNAME }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
       - name: connect and deploy
         uses: appleboy/ssh-action@master
         with:
