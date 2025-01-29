@@ -17,9 +17,9 @@ export class EventController {
     return this.eventService.findAll();
   }
 
-  @Get(":id")
+  @Get(":event_id")
   findById(
-    @Param('id') id: string
+    @Param('event_id') id: string
   ) {
     return this.eventService.findById(id);
   }
@@ -31,17 +31,17 @@ export class EventController {
     return this.eventService.create(createEventDTO);
   }
 
-  @Put(":id")
+  @Put(":event_id")
   update(
-    @Param('id') id: string,
+    @Param('event_id') id: string,
     @Body() updateEventDTO: RequestEventDTO
   ) {
     return this.eventService.update(id, updateEventDTO);
   }
 
-  @Delete(":id")
+  @Delete(":event_id")
   delete(
-    @Param('id') id: string
+    @Param('event_id') id: string
   ) {
     return this.eventService.delete(id);
   }

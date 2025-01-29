@@ -15,7 +15,10 @@ async function bootstrap() {
     .build()
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory);
+  if (process.env.NODE_ENV === 'production') {
+    SwaggerModule.setup('qr-services/docs', app, documentFactory);
+  }
+  SwaggerModule.setup('docs', app, documentFactory);
 
   await app.listen(3000);
 }
