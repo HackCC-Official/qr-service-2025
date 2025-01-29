@@ -8,6 +8,10 @@ async function bootstrap() {
     bufferLogs: true
   });
 
+  if (process.env.NODE_ENV === 'production') {
+    app.setGlobalPrefix('qr-service');
+  }
+
   const config = new DocumentBuilder()
     .setTitle('QR Service')
     .setDescription('QR Service API Documentation')
@@ -15,9 +19,9 @@ async function bootstrap() {
     .build()
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);
-  if (process.env.NODE_ENV === 'production') {
-    SwaggerModule.setup('qr-services/docs', app, documentFactory);
-  }
+
+  console.log(process.env.NODE_ENV)
+
   SwaggerModule.setup('docs', app, documentFactory);
 
   await app.listen(3000);
