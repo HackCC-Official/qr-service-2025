@@ -4,7 +4,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
-import { RequestEventDTO } from "src/drizzle/schema/event";
+import { RequestEventDTO, ResponseEventDTO } from "src/drizzle/schema/event";
 
 @Injectable()
 export class EventService {
@@ -16,45 +16,45 @@ export class EventService {
   ) {}
 
   async findAll() {
-    return this.db
+    return await this.db
       .query
       .events
       .findMany();
   }
 
-  async findById(id: string) {
+  async findById(id: string) : Promise<ResponseEventDTO> {
     return this.db
       .query
       .events
       .findFirst({ where: eq(schema.events.id, id) });
   }
 
-  async findByDate(date: string) {
+  async findByDate(date: string) : Promise<ResponseEventDTO> {
     return this.db
       .query
       .events
       .findFirst({ where: eq(schema.events.date, date) });
   }
 
-  async create(createEventDTO: RequestEventDTO) {
+  async create(createEventDTO: RequestEventDTO) : Promise<ResponseEventDTO> {
     const event = await this
       .db
       .insert(schema.events)
       .values(createEventDTO)
-      .returning();
+      .returning()[0];
 
     this.logger.info({ msg: 'Creating event', event });
 
     return event;
   }
 
-  async update(eventId: string, updateEventDTO: RequestEventDTO) {
+  async update(eventId: string, updateEventDTO: RequestEventDTO): Promise<ResponseEventDTO> {
     const event = await this
       .db
       .update(schema.events)
       .set(updateEventDTO)
       .where(eq(schema.events.id, eventId))
-      .returning();
+      .returning()[0];
 
     this.logger.info({ msg: 'Updating event', event });
 
