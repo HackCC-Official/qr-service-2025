@@ -37,11 +37,11 @@ export class EventService {
   }
 
   async create(createEventDTO: RequestEventDTO) : Promise<ResponseEventDTO> {
-    const event = await this
+    const [event] = await this
       .db
       .insert(schema.events)
       .values(createEventDTO)
-      .returning()[0];
+      .returning()
 
     this.logger.info({ msg: 'Creating event', event });
 
@@ -49,12 +49,12 @@ export class EventService {
   }
 
   async update(eventId: string, updateEventDTO: RequestEventDTO): Promise<ResponseEventDTO> {
-    const event = await this
+    const [event] = await this
       .db
       .update(schema.events)
       .set(updateEventDTO)
       .where(eq(schema.events.id, eventId))
-      .returning()[0];
+      .returning();
 
     this.logger.info({ msg: 'Updating event', event });
 
@@ -62,7 +62,7 @@ export class EventService {
   }
 
   async delete(eventId: string) {
-    const event = await this
+    const [event] = await this
       .db
       .delete(schema.events)
       .where(eq(schema.events.id, eventId))

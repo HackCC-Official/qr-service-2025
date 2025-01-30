@@ -15,7 +15,7 @@ export class EventController {
     return await this.eventService.findAll();
   }
 
-  @ApiOperation({ summary: 'Find an Event by a date (format: yyyy-mm-dd)'})
+  @ApiOperation({ summary: 'Finds an Event by a date (format: yyyy-mm-dd)'})
   @ApiParam({
     description: 'a date of type string (yyyy-mm-dd) that is used to retrieve a single event',
     name: "date"
