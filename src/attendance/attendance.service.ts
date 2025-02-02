@@ -8,6 +8,7 @@ import { eq } from "drizzle-orm";
 import { RequestAttendanceDTO } from "./request-attendance.dto";
 import { AttendanceStatus } from "src/drizzle/schema/attendance";
 import { EventService } from "src/event/event.service";
+import { HttpService } from "@nestjs/axios";
 
 @Injectable()
 export class AttendanceService {
@@ -16,7 +17,7 @@ export class AttendanceService {
     private db: NodePgDatabase<typeof schema>,
     @InjectPinoLogger(AttendanceService.name)
     private readonly logger: PinoLogger,
-    private eventService: EventService
+    private eventService: EventService,
   ) {}
 
   async findAll() {
@@ -33,7 +34,7 @@ export class AttendanceService {
       .findFirst({ where: eq(schema.events.id, id) });
   }
 
-  async takeAttendance(requestAttendanceDTO: RequestAttendanceDTO) {
+  async takeAttendance(requestAttendanceDTO: RequestAttendanceDTO): Promise<ResponseAttendanceDTO> {
     const attendanceDTO = {
       event_id: requestAttendanceDTO.event_id,
       account_id: requestAttendanceDTO.account_id,
@@ -71,6 +72,6 @@ export class AttendanceService {
 
     this.logger.info({ msg: 'Hacker checked in', attendance })
 
-    return event;
+    return attendance;
   }
 }

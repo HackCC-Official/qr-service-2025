@@ -6,6 +6,7 @@ import { MinioModule } from './minio-s3/minio.module';
 import { QRCodeModule } from './qr-code/qr-code.module';
 import { AccountConsumerModule } from './account-consumer/account-consumer.module';
 import { ConfigModule } from '@nestjs/config';
+import { AttendanceModule } from './attendance/attendance.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { ConfigModule } from '@nestjs/config';
     EventModule,
     MinioModule,
     QRCodeModule,
-    AccountConsumerModule
+    AccountConsumerModule,
+    AttendanceModule
   ],
 })
 export class AppModule {}

@@ -10,7 +10,7 @@ export class EventController {
     private eventService: EventService
   ) {}
 
-  @ApiOperation({ summary: 'Finds all Events)'})
+  @ApiOperation({ summary: 'Finds all Events'})
   @Get()
   async findAll() {
     return await this.eventService.findAll();
