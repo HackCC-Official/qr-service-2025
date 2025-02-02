@@ -7,5 +7,6 @@ import { DrizzleModule } from "src/drizzle/drizzle.module";
   imports: [DrizzleModule],
   providers: [EventService],
   controllers: [EventController],
+  exports: [EventService]
 })
 export class EventModule {}
