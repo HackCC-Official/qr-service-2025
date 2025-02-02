@@ -4,7 +4,8 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
-import { RequestEventDTO, ResponseEventDTO } from "src/drizzle/schema/event";
+import { RequestEventDTO } from "./response-event.dto";
+import { ResponseEventDTO } from "./request-event.dto";
 
 @Injectable()
 export class EventService {

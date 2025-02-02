@@ -8,6 +8,13 @@
       "when": 1737849075390,
       "tag": "0000_fast_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1738537214291,
+      "tag": "0001_chilly_mockingbird",
+      "breakpoints": true
     }
   ]
 }
