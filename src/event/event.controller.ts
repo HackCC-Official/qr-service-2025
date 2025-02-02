@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
 import { EventService } from "./event.service";
-import { RequestEventDTO, ResponseEventDTO } from "src/drizzle/schema/event";
+import { RequestEventDTO } from "./response-event.dto";
+import { ResponseEventDTO } from "./request-event.dto";
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
 
 @Controller('events')
