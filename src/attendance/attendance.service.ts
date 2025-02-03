@@ -4,11 +4,13 @@ import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
 import { ResponseAttendanceDTO } from "./response-attendance.dto";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { RequestAttendanceDTO } from "./request-attendance.dto";
 import { AttendanceStatus } from "src/drizzle/schema/attendance";
 import { EventService } from "src/event/event.service";
-import { HttpService } from "@nestjs/axios";
+import { AccountService } from "src/account/account.service";
+import { catchError } from "rxjs";
+import { AxiosError } from "axios";
 
 @Injectable()
 export class AttendanceService {
@@ -18,6 +20,7 @@ export class AttendanceService {
     @InjectPinoLogger(AttendanceService.name)
     private readonly logger: PinoLogger,
     private eventService: EventService,
+    private accountService: AccountService
   ) {}
 
   async findAll() {
@@ -31,10 +34,26 @@ export class AttendanceService {
     return this.db
       .query
       .attendances
-      .findFirst({ where: eq(schema.events.id, id) });
+      .findFirst({ where: eq(schema.attendances.event_id, id) });
+  }
+
+  async findByEventIDAndAccountID(event_id: string, account_id: string) : Promise<ResponseAttendanceDTO> {
+    return this.db
+      .query
+      .attendances
+      .findFirst({ where: and(eq(schema.attendances.event_id, event_id), eq(schema.attendances.account_id, account_id)) });
   }
 
   async takeAttendance(requestAttendanceDTO: RequestAttendanceDTO): Promise<ResponseAttendanceDTO> {
+    const event = await this.eventService.findById(requestAttendanceDTO.event_id);
+    const account = await this.accountService.findById(requestAttendanceDTO.account_id)
+    const attendanceExists = await this.findByEventIDAndAccountID(requestAttendanceDTO.event_id, requestAttendanceDTO.account_id)
+
+    if (attendanceExists) {
+      this.logger.error("Account with ID " + requestAttendanceDTO.account_id + " already checked in.");
+      throw new Error("Account with ID " + requestAttendanceDTO.account_id + " already checked in.");
+    }
+
     const attendanceDTO = {
       event_id: requestAttendanceDTO.event_id,
       account_id: requestAttendanceDTO.account_id,
@@ -42,10 +61,14 @@ export class AttendanceService {
       status: AttendanceStatus.PRESENT
     }
 
-    const event = await this.eventService.findById(requestAttendanceDTO.event_id);
-
     if (!event) {
+      this.logger.error("Event ID " + requestAttendanceDTO.event_id + " doesn't exist.")
       throw new Error("Event ID " + requestAttendanceDTO.event_id + " doesn't exist.");
+    }
+
+    if (!account) {
+      this.logger.error("Account ID " + requestAttendanceDTO.account_id + " doesn't exist.")
+      throw new Error("Account ID " + requestAttendanceDTO.account_id + " doesn't exist.");
     }
 
     const checkedInAt = new Date(attendanceDTO.checkedInAt)
