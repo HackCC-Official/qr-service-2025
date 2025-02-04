@@ -8,6 +8,7 @@ async function bootstrap() {
     bufferLogs: true
   });
 
+  app.enableCors();
   app.setGlobalPrefix(process.env.NODE_ENV === 'production' ? 'qr-service' : '')
 
   const config = new DocumentBuilder()
