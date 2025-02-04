@@ -6,9 +6,9 @@ import { attendances } from "./attendance";
 export const events = pgTable('events', {
   id: uuid().defaultRandom().primaryKey(),
   date: date(),
-  startingTime: timestamp({ mode: 'string' }),
-  lateTime: timestamp({ mode: 'string' }),
-  endingTime: timestamp({ mode: 'string' }),
+  startingTime: timestamp({ withTimezone: true, mode: 'string' }),
+  lateTime: timestamp({ withTimezone: true, mode: 'string' }),
+  endingTime: timestamp({ withTimezone: true, mode: 'string' }),
   active: boolean(),
   breakfast: boolean(),
   lunch: boolean(),

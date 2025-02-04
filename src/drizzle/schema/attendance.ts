@@ -5,7 +5,8 @@ import { events } from "./event";
 
 export enum AttendanceStatus {
   PRESENT = 'PRESENT',
-  LATE = 'LATE'
+  LATE = 'LATE',
+  
 }
 
 export const AttendanceStatusEnum = pgEnum('status', enumToPgEnum(AttendanceStatus))
@@ -15,8 +16,7 @@ export const attendances = pgTable('attendances', {
   status: AttendanceStatusEnum(),
   account_id: varchar(),
   event_id: varchar(),
-  checkedInAt: timestamp({ mode: 'string' })
-
+  checkedInAt: timestamp({ withTimezone: true, mode: 'string' })
 })
 
 export const attendancesRelationship = relations(attendances, ({ one }) => ({

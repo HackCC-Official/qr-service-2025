@@ -15,6 +15,13 @@
       "when": 1738537214291,
       "tag": "0001_chilly_mockingbird",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1738697776585,
+      "tag": "0002_vengeful_mattie_franklin",
+      "breakpoints": true
     }
   ]
 }

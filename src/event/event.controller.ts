@@ -29,7 +29,7 @@ export class EventController {
   }
 
   @Get(":event_id")
-  @ApiOperation({ summary: 'Finds all Events or a single event by events_id'})
+  @ApiOperation({ summary: 'Finds a single event by events_id'})
   @ApiParam({
     description: 'ID of existing event',
     name: "event_id"
