@@ -54,13 +54,6 @@ export class AttendanceService {
       throw new Error("Account with ID " + requestAttendanceDTO.account_id + " already checked in.");
     }
 
-    const attendanceDTO = {
-      event_id: requestAttendanceDTO.event_id,
-      account_id: requestAttendanceDTO.account_id,
-      checkedInAt: (new Date()).toISOString(),
-      status: AttendanceStatus.PRESENT
-    }
-
     if (!event) {
       this.logger.error("Event ID " + requestAttendanceDTO.event_id + " doesn't exist.")
       throw new Error("Event ID " + requestAttendanceDTO.event_id + " doesn't exist.");
@@ -71,7 +64,18 @@ export class AttendanceService {
       throw new Error("Account ID " + requestAttendanceDTO.account_id + " doesn't exist.");
     }
 
-    const checkedInAt = new Date(attendanceDTO.checkedInAt)
+    const attendanceDTO = {
+      event_id: requestAttendanceDTO.event_id,
+      account_id: requestAttendanceDTO.account_id,
+      checkedInAt: (new Date()).toISOString(),
+      status: AttendanceStatus.PRESENT
+    }
+
+    if (!this.eventService.isValidCheckInTime(attendanceDTO.checkedInAt, event)) {
+      this.logger.info({ msg: 'Invalid attendance check in time for Account ID: ' + attendanceDTO.account_id, attendanceDTO, event })
+    }
+
+    const checkedInAt = new Date(attendanceDTO.checkedInAt);
     const startingTime = new Date(event.startingTime);
     const lateTime = new Date(event.lateTime);
     const endingTime = new Date(event.endingTime);
@@ -80,12 +84,6 @@ export class AttendanceService {
       attendanceDTO.status = AttendanceStatus.PRESENT;
     } else if (lateTime <= checkedInAt && checkedInAt <= endingTime) {
       attendanceDTO.status = AttendanceStatus.LATE;
-    } else {
-      if (checkedInAt <= startingTime) {
-        throw new Error("Attempting to check in before starting time")
-      } else {
-        throw new Error("Attempting to check after ending time")
-      }
     }
 
     const [attendance] = await this.db

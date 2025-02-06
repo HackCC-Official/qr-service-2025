@@ -23,6 +23,20 @@ export class EventService {
       .findMany();
   }
 
+  async isValidCheckInTime(checkedInAtStr: string, event: ResponseEventDTO) {
+    const checkedInAt = new Date(checkedInAtStr)
+    const startingTime = new Date(event.startingTime);
+    const endingTime = new Date(event.endingTime);
+
+    if (checkedInAt <= startingTime || checkedInAt >= endingTime) {
+      throw new Error("Attempting to check in before starting time")
+    } else if (checkedInAt >= endingTime) {
+      throw new Error("Attempting to check after ending time")
+    }
+
+    return true
+  }
+
   async findById(id: string) : Promise<ResponseEventDTO> {
     return this.db
       .query
