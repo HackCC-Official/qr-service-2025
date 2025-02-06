@@ -26,5 +26,5 @@ export const mealsRelationship = relations(meals, ({ one }) => ({
   })
 }))
 
-export type MealtSelect = typeof meals.$inferSelect;
+export type MealSelect = typeof meals.$inferSelect;
 export type MealInsert = typeof meals.$inferInsert;
