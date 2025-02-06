@@ -2,6 +2,7 @@ import { ApiProperty } from "@nestjs/swagger";
 import { relations } from "drizzle-orm";
 import { pgTable, uuid, boolean, date, timestamp } from "drizzle-orm/pg-core";
 import { attendances } from "./attendance";
+import { meals } from "./meal";
 
 export const events = pgTable('events', {
   id: uuid().defaultRandom().primaryKey(),
@@ -16,7 +17,8 @@ export const events = pgTable('events', {
 })
 
 export const eventsRelationships = relations(events, ({ many }) => ({
-  attendances: many(attendances)
+  attendances: many(attendances),
+  meals: many(meals)
 }))
 
 export type EventSelect = typeof events.$inferSelect;
