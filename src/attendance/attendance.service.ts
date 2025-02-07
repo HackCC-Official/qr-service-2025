@@ -73,6 +73,7 @@ export class AttendanceService {
 
     if (!this.eventService.isValidCheckInTime(attendanceDTO.checkedInAt, event)) {
       this.logger.info({ msg: 'Invalid attendance check in time for Account ID: ' + attendanceDTO.account_id, attendanceDTO, event })
+      return;
     }
 
     const checkedInAt = new Date(attendanceDTO.checkedInAt);

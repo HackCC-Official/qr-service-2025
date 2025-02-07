@@ -7,8 +7,8 @@ import { QRCodeModule } from './qr-code/qr-code.module';
 import { AccountConsumerModule } from './account-consumer/account-consumer.module';
 import { ConfigModule } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
-import { AccountService } from './account/account.service';
 import { AccountModule } from './account/account.module';
+import { MealModule } from './meal/meal.module';
 
 @Module({
   imports: [
@@ -31,6 +31,7 @@ import { AccountModule } from './account/account.module';
     QRCodeModule,
     AccountConsumerModule,
     AttendanceModule,
+    MealModule,
     AccountModule,
   ],
 })

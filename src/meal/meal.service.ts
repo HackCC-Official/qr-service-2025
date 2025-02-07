@@ -22,7 +22,7 @@ export class MealService {
   ) {}
 
   getHourAtPST(date: Date = new Date()) {
-    const format = new Intl.DateTimeFormat('en', {hour: '2-digit', hour12: false, timeZone: 'PST' })
+    const format = new Intl.DateTimeFormat('en', {hour: '2-digit', hour12: false, timeZone: 'America/Los_Angeles' })
     return Number(format.formatToParts(date)[0].value)
   }
 
@@ -43,13 +43,23 @@ export class MealService {
       throw new Error("Account with ID " + requestMealDTO.account_id + " already claimed meal.");
     }
 
+    if (!event) {
+      this.logger.error("Event ID " + requestMealDTO.event_id + " doesn't exist.")
+      throw new Error("Event ID " + requestMealDTO.event_id + " doesn't exist.");
+    }
+
+    if (!account) {
+      this.logger.error("Account ID " + requestMealDTO.account_id + " doesn't exist.")
+      throw new Error("Account ID " + requestMealDTO.account_id + " doesn't exist.");
+    }
+
     const currentHour = this.getHourAtPST();
 
     const mealType = 
-      currentHour >= 6 && currentHour <= 11 ?
+      currentHour >= 6 && currentHour < 11 ?
         MealType.BREAKFAST
         :
-        currentHour > 11 && currentHour <= 3
+        currentHour >= 11 && currentHour <= 14
         ?
         MealType.LUNCH
         :
@@ -64,7 +74,10 @@ export class MealService {
     
     if (!this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event)) {
       this.logger.info({ msg: 'Invalid meal check in time for Account ID: ' + mealDTO.account_id, mealDTO, event })
+      return;
     }
+
+    console.log(!this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event), 'RAN')
 
     const [meal] = await this.db
       .insert(schema.meals)

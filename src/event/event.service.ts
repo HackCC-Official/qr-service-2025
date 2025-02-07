@@ -28,11 +28,19 @@ export class EventService {
     const startingTime = new Date(event.startingTime);
     const endingTime = new Date(event.endingTime);
 
-    if (checkedInAt <= startingTime || checkedInAt >= endingTime) {
-      throw new Error("Attempting to check in before starting time")
+    if (checkedInAt <= startingTime) {
+      this.logger.error("Attempting to check in before starting time")
     } else if (checkedInAt >= endingTime) {
-      throw new Error("Attempting to check after ending time")
+      this.logger.error("Attempting to check after ending time")
     }
+
+    console.log("1", checkedInAt <= startingTime || checkedInAt >= endingTime)
+
+    if (checkedInAt <= startingTime || checkedInAt >= endingTime) {
+      return false
+    }
+
+    console.log("2", checkedInAt <= startingTime || checkedInAt >= endingTime)
 
     return true
   }

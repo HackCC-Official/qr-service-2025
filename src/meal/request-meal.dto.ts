@@ -11,9 +11,4 @@ export class RequestMealDTO implements MealInsert {
     example: 'f0d9690d-85a1-4473-ab5c-0f08fc228b18'
   })
   event_id: string;
-  
-  @ApiProperty({
-    example: 'DINNER'
-  })
-  mealType: MealType
 }
