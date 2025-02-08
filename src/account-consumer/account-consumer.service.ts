@@ -17,7 +17,8 @@ export class AccountConsumerService implements OnModuleInit {
     private configService: ConfigService,
     private qrService: QRCodeService,
   ) {
-    const connection = amqp.connect('amqp://hackcc:2025@rabbitmq:5672');
+    const connection = amqp.connect(this.configService.get<string>('RABBITMQ_URL'));
+    console.log(this.configService.get<string>('RABBITMQ_URL'))
     this.channelWrapper = connection.createChannel({
       setup: (channel: Channel) => {
         return channel.assertExchange(

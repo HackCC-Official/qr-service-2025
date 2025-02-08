@@ -72,7 +72,7 @@ export class MealService {
       mealType
     }
 
-    const isValidCheckInTime = await this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event)
+    const isValidCheckInTime = this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event)
     
     if (!isValidCheckInTime) {
       this.logger.info({ msg: 'Invalid meal check in time for Account ID: ' + mealDTO.account_id, mealDTO, event })

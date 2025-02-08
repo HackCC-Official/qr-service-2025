@@ -23,7 +23,7 @@ export class EventService {
       .findMany();
   }
 
-  async isValidCheckInTime(checkedInAtStr: string, event: ResponseEventDTO) {
+  isValidCheckInTime(checkedInAtStr: string, event: ResponseEventDTO) {
     const checkedInAt = new Date(checkedInAtStr)
     const startingTime = new Date(event.startingTime);
     const endingTime = new Date(event.endingTime);
@@ -33,8 +33,6 @@ export class EventService {
     } else if (checkedInAt >= endingTime) {
       this.logger.error("Attempting to check after ending time")
     }
-
-    console.log(!(checkedInAt <= startingTime || checkedInAt >= endingTime))
 
     return !(checkedInAt <= startingTime || checkedInAt >= endingTime);
   }

@@ -18,9 +18,7 @@ async function bootstrap() {
     .build()
 
   const documentFactory = () => SwaggerModule.createDocument(app, config, { ignoreGlobalPrefix: false });
-
-  console.log(process.env.NODE_ENV)
-
+  
   SwaggerModule.setup(
     process.env.NODE_ENV === 'production' ? 'qr-service/docs' : 'docs', 
     app, 
