@@ -34,15 +34,9 @@ export class EventService {
       this.logger.error("Attempting to check after ending time")
     }
 
-    console.log("1", checkedInAt <= startingTime || checkedInAt >= endingTime)
+    console.log(!(checkedInAt <= startingTime || checkedInAt >= endingTime))
 
-    if (checkedInAt <= startingTime || checkedInAt >= endingTime) {
-      return false
-    }
-
-    console.log("2", checkedInAt <= startingTime || checkedInAt >= endingTime)
-
-    return true
+    return !(checkedInAt <= startingTime || checkedInAt >= endingTime);
   }
 
   async findById(id: string) : Promise<ResponseEventDTO> {

@@ -35,7 +35,7 @@ export class MealService {
 
   async claimMeal(requestMealDTO: RequestMealDTO): Promise<ResponseMealDTO> {
     const event = await this.eventService.findById(requestMealDTO.event_id);
-    const account = await this.eventService.findById(requestMealDTO.account_id);
+    const account = await this.accountService.findById(requestMealDTO.account_id);
     const mealExists = await this.findByEventIDAndAccountID(requestMealDTO.event_id, requestMealDTO.account_id);
 
     if (mealExists) {
@@ -71,15 +71,14 @@ export class MealService {
       checkedInAt: (new Date()).toISOString(),
       mealType
     }
+
+    const isValidCheckInTime = await this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event)
     
-    if (!this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event)) {
+    if (!isValidCheckInTime) {
       this.logger.info({ msg: 'Invalid meal check in time for Account ID: ' + mealDTO.account_id, mealDTO, event })
       return;
-    }
-
-    console.log(!this.eventService.isValidCheckInTime(mealDTO.checkedInAt, event), 'RAN')
-
-    const [meal] = await this.db
+    } else {
+      const [meal] = await this.db
       .insert(schema.meals)
       .values(mealDTO)
       .returning()
@@ -87,5 +86,6 @@ export class MealService {
       this.logger.info({ msg: 'meal claimed', mealDTO })
 
       return meal;
+    }
   }
 }
