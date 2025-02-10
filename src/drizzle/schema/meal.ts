@@ -6,7 +6,8 @@ import { events } from "./event";
 export enum MealType {
   BREAKFAST = 'BREAKFAST',
   LUNCH = 'LUNCH',
-  DINNER = 'DINNER'
+  DINNER = 'DINNER',
+  UNCLAIMED = 'UNCLAIMED'
 }
 
 export const MealTypeEnum = pgEnum('mealType', enumToPgEnum(MealType))

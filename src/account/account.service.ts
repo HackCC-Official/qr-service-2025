@@ -5,6 +5,7 @@ import { Observable, catchError, firstValueFrom } from "rxjs";
 import { AccountDTO } from "./account.dto";
 import { ConfigService } from "@nestjs/config";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
+import { Account } from "src/account-consumer/account";
 
 @Injectable()
 export class AccountService {
@@ -15,12 +16,31 @@ export class AccountService {
     private readonly logger: PinoLogger,
   ) {}
 
+  async findAll(): Promise<AccountDTO[]> {
+    const accountServiceUrl = 
+    this.configService.get<string>('ACCOUNT_SERVICE_URL');
+
+    const { data } = await firstValueFrom(
+      this.httpService.get(
+        accountServiceUrl + '/accounts'
+      )
+      .pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error)
+          throw new Error("Error with batch-fetching.");
+        })
+      )
+    )
+
+    return data
+  }
+
   async findById(id: string): Promise<AccountDTO> {
     const accountServiceUrl = 
       this.configService.get<string>('ACCOUNT_SERVICE_URL')
 
     const { data } = await firstValueFrom(
-      this.httpService.get(accountServiceUrl + '/' + id)
+      this.httpService.get(accountServiceUrl + '/accounts/' + id)
       .pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error)
@@ -29,5 +49,29 @@ export class AccountService {
       )
     )
     return data;
+  }
+
+  async batchFindById(account_ids: string[]): Promise<AccountDTO[]> {
+    const accountServiceUrl = 
+      this.configService.get<string>('ACCOUNT_SERVICE_URL');
+
+    const { data } = await firstValueFrom(
+      this.httpService.get(
+        accountServiceUrl + '/accounts',
+        {
+          params: {
+            account_ids
+          }
+        }
+      )
+      .pipe(
+        catchError((error: AxiosError) => {
+          this.logger.error(error)
+          throw new Error("Error with batch-fetching.");
+        })
+      )
+    )
+
+    return data
   }
 }
