@@ -4,7 +4,8 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
-import { RequestEventDTO } from "src/drizzle/schema/event";
+import { RequestEventDTO } from "./response-event.dto";
+import { ResponseEventDTO } from "./request-event.dto";
 
 @Injectable()
 export class EventService {
@@ -16,40 +17,54 @@ export class EventService {
   ) {}
 
   async findAll() {
-    return this.db
+    return await this.db
       .query
       .events
       .findMany();
   }
 
-  async findById(id: string) {
+  isValidCheckInTime(checkedInAtStr: string, event: ResponseEventDTO) {
+    const checkedInAt = new Date(checkedInAtStr)
+    const startingTime = new Date(event.startingTime);
+    const endingTime = new Date(event.endingTime);
+
+    if (checkedInAt <= startingTime) {
+      this.logger.error("Attempting to check in before starting time")
+    } else if (checkedInAt >= endingTime) {
+      this.logger.error("Attempting to check after ending time")
+    }
+
+    return !(checkedInAt <= startingTime || checkedInAt >= endingTime);
+  }
+
+  async findById(id: string) : Promise<ResponseEventDTO> {
     return this.db
       .query
       .events
       .findFirst({ where: eq(schema.events.id, id) });
   }
 
-  async findByDate(date: string) {
+  async findByDate(date: string) : Promise<ResponseEventDTO> {
     return this.db
       .query
       .events
       .findFirst({ where: eq(schema.events.date, date) });
   }
 
-  async create(createEventDTO: RequestEventDTO) {
-    const event = await this
+  async create(createEventDTO: RequestEventDTO) : Promise<ResponseEventDTO> {
+    const [event] = await this
       .db
       .insert(schema.events)
       .values(createEventDTO)
-      .returning();
+      .returning()
 
     this.logger.info({ msg: 'Creating event', event });
 
     return event;
   }
 
-  async update(eventId: string, updateEventDTO: RequestEventDTO) {
-    const event = await this
+  async update(eventId: string, updateEventDTO: RequestEventDTO): Promise<ResponseEventDTO> {
+    const [event] = await this
       .db
       .update(schema.events)
       .set(updateEventDTO)
@@ -62,7 +77,7 @@ export class EventService {
   }
 
   async delete(eventId: string) {
-    const event = await this
+    const [event] = await this
       .db
       .delete(schema.events)
       .where(eq(schema.events.id, eventId))

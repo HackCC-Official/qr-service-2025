@@ -13,6 +13,9 @@ RUN npm install --legacy-peer-deps
 # Copy the rest of the application files
 COPY . .
 
+# Set the environment to production
+ENV NODE_ENV=production
+
 # Build the NestJS application
 RUN npm run build
 
