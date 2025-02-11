@@ -3,6 +3,7 @@ import { relations } from "drizzle-orm";
 import { pgTable, uuid, boolean, date, timestamp } from "drizzle-orm/pg-core";
 import { attendances } from "./attendance";
 import { meals } from "./meal";
+import { workshop_attendances } from "./workshop";
 
 export const events = pgTable('events', {
   id: uuid().defaultRandom().primaryKey(),
@@ -18,7 +19,8 @@ export const events = pgTable('events', {
 
 export const eventsRelationships = relations(events, ({ many }) => ({
   attendances: many(attendances),
-  meals: many(meals)
+  meals: many(meals),
+  workshop_attendances: many(workshop_attendances)
 }))
 
 export type EventSelect = typeof events.$inferSelect;
