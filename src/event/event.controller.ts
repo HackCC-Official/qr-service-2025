@@ -10,7 +10,7 @@ export class EventController {
     private eventService: EventService
   ) {}
 
-  @ApiOperation({ summary: 'Finds all Events'})
+  @ApiOperation({ summary: 'Finds all Events' })
   @Get()
   async findAll() {
     return await this.eventService.findAll();
@@ -22,10 +22,10 @@ export class EventController {
     name: "date"
   })
   @Get('/date/:date')
-  findByDateString(
+  async findByDateString(
     @Param('date') date: string
   ) : Promise<ResponseEventDTO> {
-    return this.eventService.findByDate(date);
+    return await this.eventService.findByDate(date);
   }
 
   @Get(":event_id")
@@ -34,10 +34,10 @@ export class EventController {
     description: 'ID of existing event',
     name: "event_id"
   })
-  findById(
+  async findById(
     @Param('event_id') id: string
   ) : Promise<ResponseEventDTO> {
-    return this.eventService.findById(id);
+    return await this.eventService.findById(id);
   }
 
   @Post()
@@ -66,12 +66,12 @@ export class EventController {
   }
 
   @Delete(":event_id")
-  @ApiOperation({ summary: 'Deletes an event'})
+  @ApiOperation({ summary: 'Deletes an event' })
   @ApiParam({
     description: 'ID of existing event',
     name: "event_id"
   })
-  delete(
+  async delete(
     @Param('event_id') id: string
   ) {
     return this.eventService.delete(id);
