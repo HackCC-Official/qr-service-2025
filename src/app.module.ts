@@ -10,6 +10,7 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { AccountModule } from './account/account.module';
 import { MealModule } from './meal/meal.module';
 import { WorkshopOrganizerModule } from './workshop-organizer/workshop-organizer.module';
+import { WorkshopModule } from './workshop/workshop.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { WorkshopOrganizerModule } from './workshop-organizer/workshop-organizer
     AttendanceModule,
     MealModule,
     AccountModule,
+    WorkshopModule,
     WorkshopOrganizerModule
   ],
 })
