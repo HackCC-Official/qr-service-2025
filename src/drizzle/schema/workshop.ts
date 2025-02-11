@@ -14,6 +14,9 @@ export const workshopsRelationship = relations(workshops, ({ many }) => ({
   workshop_attendances: many(workshop_attendances)
 }))
 
+export type WorkshopSelect = typeof workshops.$inferSelect;
+export type WorkshopInsert = typeof workshops.$inferInsert;
+
 export const workshop_organizers = pgTable('workshop_organizers', {
   id: uuid().defaultRandom().primaryKey(),
   account_id: varchar(),
@@ -26,6 +29,9 @@ export const workshop_organizersRelationship = relations(workshop_organizers, ({
     references: [workshops.id]
   })
 }))
+
+export type WorkshopOrganizerSelect = typeof workshops.$inferSelect;
+export type WorkshopOrganizerInsert = typeof workshops.$inferInsert;
 
 export const workshop_attendances = pgTable('workshop_attendances', {
   id: uuid().defaultRandom().primaryKey(),
@@ -45,3 +51,6 @@ export const workshop_attendancesRelationship = relations(workshop_attendances, 
     references: [events.id]
   })
 }))
+
+export type WorkshopAttendnaceSelect = typeof workshops.$inferSelect;
+export type WorkshopAttendanceInsert = typeof workshops.$inferInsert;
