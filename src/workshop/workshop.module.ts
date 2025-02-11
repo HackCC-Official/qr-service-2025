@@ -6,6 +6,7 @@ import { WorkshopController } from "./workshop.controller";
 @Module({
   imports: [DrizzleModule],
   providers: [WorkshopService],
-  controllers: [WorkshopController]
+  controllers: [WorkshopController],
+  exports: [WorkshopService]
 })
 export class WorkshopModule {}

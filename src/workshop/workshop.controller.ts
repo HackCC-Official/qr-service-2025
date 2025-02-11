@@ -36,19 +36,6 @@ export class WorkshopController {
     return await this.workshopService.create(createWorkshopDTO);
   }
 
-  @Put(':workshop_id')
-  @ApiOperation({ summary: 'Updates an existing workshop' })
-  @ApiParam({
-    description: 'ID of existing workshop',
-    name: 'workshop_id'
-  })
-  async update(
-    @Param('workshop_id') id: string,
-    @Body() updateWorkshopDTO: RequestWorkshopDTO
-  ) : Promise<ResponseWorkshopDTO> {
-    return await this.workshopService.update(id, updateWorkshopDTO)
-  }
-
   @Delete(':workshop_id')
   @ApiOperation({ summary: 'Deletes a workshop' })
   @ApiParam({
