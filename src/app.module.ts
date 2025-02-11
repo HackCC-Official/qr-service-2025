@@ -9,6 +9,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AccountModule } from './account/account.module';
 import { MealModule } from './meal/meal.module';
+import { WorkshopOrganizerModule } from './workshop-organizer/workshop-organizer.module';
+import { WorkshopModule } from './workshop/workshop.module';
 
 @Module({
   imports: [
@@ -33,6 +35,8 @@ import { MealModule } from './meal/meal.module';
     AttendanceModule,
     MealModule,
     AccountModule,
+    WorkshopModule,
+    WorkshopOrganizerModule
   ],
 })
 export class AppModule {}
