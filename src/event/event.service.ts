@@ -1,4 +1,4 @@
-import { Inject, Injectable, Logger } from "@nestjs/common";
+ import { Inject, Injectable, Logger } from "@nestjs/common";
 import { eq } from "drizzle-orm";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
@@ -76,7 +76,7 @@ export class EventService {
     return event;
   }
 
-  async delete(eventId: string) {
+  async delete(eventId: string): Promise<ResponseEventDTO> {
     const [event] = await this
       .db
       .delete(schema.events)
