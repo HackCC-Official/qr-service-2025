@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { WorkshopAttendanceService } from "./workshop-attendance.service";
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
 import { WorkshopAttendanceQueryParamDTO } from "./wrokshop-attendance-query-param.dto";
 import { ResponseWorkshopAttendanceDTO } from "./response-workshop-attendance.dto";
+import { RequestWorkshopAttendanceDTO } from "./request-workshop-attendance.dto";
 
 @ApiTags('Workshop Attendance')
 @Controller('workshop-attendances')
@@ -46,5 +47,13 @@ export class WorkshopAttendanceController {
     @Param('workshop_attendance_id') id: string
   ): Promise<ResponseWorkshopAttendanceDTO> {
     return this.workshopAttendanceService.findById(id)
+  }
+
+  @Post()
+  @ApiOperation({ summary: 'Take a hacker\'s attendance at a workshop'})
+  create(
+    @Body() requestWorkshopAttendanceDTO: RequestWorkshopAttendanceDTO
+  ): Promise<ResponseWorkshopAttendanceDTO> {
+    return this.workshopAttendanceService.takeAttendance(requestWorkshopAttendanceDTO)
   }
 }

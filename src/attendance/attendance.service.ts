@@ -92,7 +92,7 @@ export class AttendanceService {
       .values(attendanceDTO)
       .returning()
 
-    this.logger.info({ msg: 'Hacker checked in', attendance })
+    this.logger.info({ msg: 'Taking hacker attendance', attendance })
 
     return attendance;
   }

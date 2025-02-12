@@ -1,7 +1,7 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { WorkshopInsert } from "src/drizzle/schema/workshop";
 
-export class ResponseWorkshopAttendance implements WorkshopInsert {
+export class RequestWorkshopAttendanceDTO implements WorkshopInsert {
   @ApiProperty({
     example: 'cdbbdbe3-da01-47c1-8225-6a7d359a2365'
   })

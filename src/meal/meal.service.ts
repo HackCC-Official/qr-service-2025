@@ -129,8 +129,8 @@ export class MealService {
         .meals
         .findMany({ 
           where: and(
-            eq(schema.meals.event_id, event_id),
-            eq(schema.meals.mealType, currentMealStatus)
+            eq(schema.meals.event_id, query && query.event_id ? event_id : null),
+            eq(schema.meals.mealType, query && query.mealStatus ? currentMealStatus : null)
           ) 
         })
         :
