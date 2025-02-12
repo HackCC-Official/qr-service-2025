@@ -11,6 +11,7 @@ import { AccountModule } from './account/account.module';
 import { MealModule } from './meal/meal.module';
 import { WorkshopOrganizerModule } from './workshop-organizer/workshop-organizer.module';
 import { WorkshopModule } from './workshop/workshop.module';
+import { WorkshopAttendanceModule } from './workshop-attendance/workshop-attendance.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { WorkshopModule } from './workshop/workshop.module';
     MealModule,
     AccountModule,
     WorkshopModule,
-    WorkshopOrganizerModule
+    WorkshopOrganizerModule,
+    WorkshopAttendanceModule
   ],
 })
 export class AppModule {}
