@@ -52,5 +52,5 @@ export const workshop_attendancesRelationship = relations(workshop_attendances, 
   })
 }))
 
-export type WorkshopAttendnaceSelect = typeof workshops.$inferSelect;
-export type WorkshopAttendanceInsert = typeof workshops.$inferInsert;
+export type WorkshopAttendanceSelect = typeof workshop_attendances.$inferSelect;
+export type WorkshopAttendanceInsert = typeof workshop_attendances.$inferInsert;
