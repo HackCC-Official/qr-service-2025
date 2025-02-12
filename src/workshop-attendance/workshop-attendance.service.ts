@@ -5,6 +5,8 @@ import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
 import { WorkshopAttendanceQueryParamDTO } from "./wrokshop-attendance-query-param.dto";
 import { and, eq } from "drizzle-orm";
+import { ResponseWorkshopAttendance } from "./request-workshop-attendance.dto";
+import { ResponseWorkshopAttendanceDTO } from "./response-workshop-attendance.dto";
 
 @Injectable()
 export class WorkshopAttendanceService {
@@ -26,6 +28,16 @@ export class WorkshopAttendanceService {
           eq(schema.workshop_attendances.workshop_id, query.workshop_id),
           eq(schema.workshop_attendances.event_id, query.event_id)
         )
+      })
+  }
+
+  async findById(id: string): Promise<ResponseWorkshopAttendanceDTO> {
+    return this
+      .db
+      .query
+      .workshop_attendances
+      .findFirst({
+        where: eq(schema.workshop_attendances.account_id, id)
       })
   }
 }
