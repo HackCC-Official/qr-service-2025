@@ -10,6 +10,7 @@ import { and, eq } from "drizzle-orm";
 import { ResponseMealDTO } from "./response-meal.dto";
 import { MealType } from "src/drizzle/schema/meal";
 import { ResponseMealAccountDTO } from "./response-meal-account.dto";
+import { MealQueryParamDTO } from "./meal-query-param.dto";
 
 @Injectable()
 export class MealService {
@@ -107,7 +108,8 @@ export class MealService {
     }
   }
 
-  async findUsersByEventIDAndStatus(event_id: string, mealStatus?: MealType): Promise<ResponseMealAccountDTO[]> {
+  async findUsersByEventIDAndStatus(query: MealQueryParamDTO): Promise<ResponseMealAccountDTO[]> {
+    const { event_id, mealStatus } = query;
     let meals: ResponseMealAccountDTO[] = [];
     const event = await this.eventService.findById(event_id);
 
