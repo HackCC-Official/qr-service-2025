@@ -3,18 +3,8 @@ import { RequestMealDTO } from "./request-meal.dto";
 import { ApiBody, ApiOperation, ApiQuery } from "@nestjs/swagger";
 import { ResponseMealDTO } from "./response-meal.dto";
 import { MealService } from "./meal.service";
-import { MealType } from "src/drizzle/schema/meal";
-import { IsEnum, IsNotEmpty, IsUUID } from 'class-validator'
 import { ResponseMealAccountDTO } from "./response-meal-account.dto";
-
-class MealQueryParamDTO {
-  @IsUUID()
-  @IsNotEmpty()
-  event_id: string;
-
-  @IsEnum(MealType)
-  mealStatus?: MealType;
-}
+import { MealQueryParamDTO } from "./meal-query-param.dto";
 
 @Controller('meals')
 export class MealController {
@@ -35,9 +25,9 @@ export class MealController {
     description: 'the meal status/type we want to check for. Do not set if we want to track unclaimed meals for current meal status (BREAKFAST, LUNCH, DINNER)'
   })
   async getUserByEventIdAndMealStatus(
-    @Query() mealQuery: MealQueryParamDTO
+    @Query() query: MealQueryParamDTO
   ): Promise<ResponseMealAccountDTO[]> {
-    return this.mealService.findUsersByEventIDAndStatus(mealQuery.event_id, mealQuery.mealStatus)
+    return this.mealService.findUsersByEventIDAndStatus(query)
   }
 
 

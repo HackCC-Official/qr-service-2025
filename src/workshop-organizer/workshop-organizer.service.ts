@@ -27,6 +27,17 @@ export class WorkshopOrganizerService {
       .findMany();
   }
 
+  async findByWorkshopId(workshop_id: string): Promise<ResponseWorkshopOrganizerDTO> {
+    return await this.db
+      .query
+      .workshop_organizers
+      .findFirst({ where: 
+        and(
+          eq(schema.workshop_organizers.workshop_id, workshop_id)
+        ) 
+      })
+  }
+
   async findByWorkshopIdAndOrganizerId(workshop_id: string, organizer_id: string): Promise<ResponseWorkshopOrganizerDTO> {
     return await this.db
       .query
