@@ -24,24 +24,59 @@ export class AttendanceService {
   ) {}
 
   async findAll() {
-    return await this.db
+    const attendances = await this.db
       .query
       .attendances
       .findMany();
+
+    const account_ids = attendances.map(a => a.account_id) as string[]
+    const accounts = await this.accountService.batchFindById(account_ids);
+    const account_map = {}
+
+    for (const account of accounts) {
+      account_map[account.id] = account;
+    }
+    
+    return attendances.map((a) => {
+      const account_id = a.account_id as string
+      delete a.account_id
+      return {
+        ...a,
+        account: account_map[account_id]
+      }
+    })
   }
 
   async findById(id: string) : Promise<ResponseAttendanceDTO> {
-    return this.db
+    const attendance = await this.db
       .query
       .attendances
       .findFirst({ where: eq(schema.attendances.event_id, id) });
+
+    const account = await this.accountService.findById(attendance.account_id)
+
+    delete attendance.account_id;
+
+    return {
+      ...attendance,
+      account
+    };
   }
 
   async findByEventIDAndAccountID(event_id: string, account_id: string) : Promise<ResponseAttendanceDTO> {
-    return this.db
+    const attendance = await this.db
       .query
       .attendances
       .findFirst({ where: and(eq(schema.attendances.event_id, event_id), eq(schema.attendances.account_id, account_id)) });
+
+    const account = await this.accountService.findById(attendance.account_id)
+
+    delete attendance.account_id;
+
+    return {
+      ...attendance,
+      account
+    };
   }
 
   async takeAttendance(requestAttendanceDTO: RequestAttendanceDTO): Promise<ResponseAttendanceDTO> {
@@ -94,6 +129,11 @@ export class AttendanceService {
 
     this.logger.info({ msg: 'Taking hacker attendance', attendance })
 
-    return attendance;
+    delete attendance.account_id;
+
+    return {
+      ...attendance,
+      account
+    }
   }
 }
