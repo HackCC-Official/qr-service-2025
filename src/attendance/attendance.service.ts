@@ -12,6 +12,7 @@ import { AccountService } from "src/account/account.service";
 import { catchError } from "rxjs";
 import { AxiosError } from "axios";
 import { AttendanceQueryParamDTO } from "./attendance-query-param.dto";
+import { AccountDTO } from "src/account/account.dto";
 
 @Injectable()
 export class AttendanceService {
@@ -49,7 +50,7 @@ export class AttendanceService {
       where: whereConditions.length > 0 ? and(...whereConditions) : undefined })
 
     const account_ids = attendances.map(a => a.account_id) as string[]
-    let accounts;
+    let accounts: AccountDTO[];
 
     if (query.status === AttendanceStatus.PRESENT || query.status === AttendanceStatus.LATE) {
       accounts = await this.accountService.batchFindById(account_ids);
@@ -73,6 +74,12 @@ export class AttendanceService {
         }
       })
     } else if (query.status === AttendanceStatus.ALL) {
+      const account_map = {}
+
+      for (const account of accounts) {
+        account_map[account.id] = account;
+      }
+
       const attended_account_set = new Set();
 
       for (const account_id of account_ids) {
@@ -80,9 +87,22 @@ export class AttendanceService {
       }
 
       const absent_accounts = accounts.filter(a => !attended_account_set.has(a.id))
-
+      console.log(absent_accounts.map(a => ({
+        status: AttendanceStatus.ABSENT,
+        id: a.id,
+        account: a,
+        event_id: query.event_id || '',
+        checkedInAt: ''
+      })))
       return [
-        ...attendances
+        ...attendances.map((a) => {
+          const account_id = a.account_id as string
+          delete a.account_id
+          return {
+            ...a,
+            account: account_map[account_id]
+          }
+        })
         ,
         ...absent_accounts.map(a => ({
           status: AttendanceStatus.ABSENT,
