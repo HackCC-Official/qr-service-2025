@@ -48,8 +48,6 @@ export class AttendanceService {
     .findMany({
       where: whereConditions.length > 0 ? and(...whereConditions) : undefined })
 
-      console.log(attendances)
-
     const account_ids = attendances.map(a => a.account_id) as string[]
     let accounts;
 
@@ -81,13 +79,11 @@ export class AttendanceService {
         invalid_account_set.add(account_id);
       }
 
-      console.log(account_ids);
-
       const valid_accounts = accounts.filter(a => !invalid_account_set.has(a.id))
       
       return valid_accounts.map(a => ({
         status: AttendanceStatus.ABSENT,
-        id: a.account_id,
+        id: a.id,
         account: a,
         event_id: query.event_id || '',
         checkedInAt: ''
