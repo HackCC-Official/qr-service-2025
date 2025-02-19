@@ -6,6 +6,7 @@ import { events } from "./event";
 export enum AttendanceStatus {
   PRESENT = 'PRESENT',
   LATE = 'LATE',
+  ABSENT = 'ABSENT'
 }
 
 export const AttendanceStatusEnum = pgEnum('status', enumToPgEnum(AttendanceStatus))
