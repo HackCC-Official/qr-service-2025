@@ -27,9 +27,9 @@ export class AttendanceService {
   async findAll(query?: AttendanceQueryParamDTO) {
     const whereConditions = [];
 
-    if (query.status !== undefined && query.status !== AttendanceStatus.ABSENT) {
+    if (query.status !== undefined && query.status !== AttendanceStatus.ABSENT && query.status !== AttendanceStatus.ALL) {
       whereConditions.push(eq(schema.attendances.status, query.status));
-    } else if (query.status !== undefined && query.status === AttendanceStatus.ABSENT) {
+    } else if (query.status !== undefined && (query.status === AttendanceStatus.ABSENT || query.status === AttendanceStatus.ALL)) {
       whereConditions.push(
         or(
           eq(schema.attendances.status, AttendanceStatus.PRESENT),
@@ -51,13 +51,13 @@ export class AttendanceService {
     const account_ids = attendances.map(a => a.account_id) as string[]
     let accounts;
 
-    if (query.status !== AttendanceStatus.ABSENT) {
+    if (query.status === AttendanceStatus.PRESENT || query.status === AttendanceStatus.LATE) {
       accounts = await this.accountService.batchFindById(account_ids);
     } else {
       accounts = await this.accountService.findAll();
     }
 
-    if (query.status !== AttendanceStatus.ABSENT) {
+    if (query.status === AttendanceStatus.PRESENT || query.status === AttendanceStatus.LATE) {
       const account_map = {}
 
       for (const account of accounts) {
@@ -72,6 +72,26 @@ export class AttendanceService {
           account: account_map[account_id]
         }
       })
+    } else if (query.status === AttendanceStatus.ALL) {
+      const attended_account_set = new Set();
+
+      for (const account_id of account_ids) {
+        attended_account_set.add(account_id);
+      }
+
+      const absent_accounts = accounts.filter(a => !attended_account_set.has(a.id))
+
+      return [
+        ...attendances
+        ,
+        ...absent_accounts.map(a => ({
+          status: AttendanceStatus.ABSENT,
+          id: a.id,
+          account: a,
+          event_id: query.event_id || '',
+          checkedInAt: ''
+        }))
+      ]
     } else {
       const invalid_account_set = new Set();
 

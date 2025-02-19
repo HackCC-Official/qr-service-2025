@@ -21,7 +21,7 @@ export class AttendanceController {
   @ApiQuery({
     required: false,
     name: 'status',
-    description: 'the attendance status we want to find (ABSENT, PRESENT, LATE)'
+    description: 'the attendance status we want to find (ALL, ABSENT, PRESENT, LATE)'
   })
   async findAll(
     @Query() query?: AttendanceQueryParamDTO,
