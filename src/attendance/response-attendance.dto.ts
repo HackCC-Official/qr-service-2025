@@ -1,7 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { AccountDTO } from "src/account/account.dto";
 import { AttendanceSelect, AttendanceStatus } from "src/drizzle/schema/attendance";
 
-export class ResponseAttendanceDTO implements AttendanceSelect {
+export class ResponseAttendanceDTO {
   @ApiProperty({
     example: 'PRESENT'
   })
@@ -11,9 +12,12 @@ export class ResponseAttendanceDTO implements AttendanceSelect {
   })
   id: string;
   @ApiProperty({
-    example: 'a4462a8f-aa76-48c1-afd2-ea00f149360b'
+    example: {
+      id: 'e5c94298-068a-4759-b4c3-1f9d24d09a76',
+      username: 'evan'
+    }
   })
-  account_id: string;
+  account: AccountDTO;
   @ApiProperty({
     example: '7f8571d7-86dc-410e-9563-9e81609cf34d'
   })

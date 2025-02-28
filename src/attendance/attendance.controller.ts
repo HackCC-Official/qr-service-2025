@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
 import { AttendanceService } from "./attendance.service";
-import { ApiOperation, ApiParam } from "@nestjs/swagger";
+import { ApiOperation, ApiParam, ApiQuery } from "@nestjs/swagger";
 import { ResponseAttendanceDTO } from "./response-attendance.dto";
 import { RequestAttendanceDTO } from "./request-attendance.dto";
+import { AttendanceQueryParamDTO } from "./attendance-query-param.dto";
 
 @Controller('attendances')
 export class AttendanceController {
@@ -12,8 +13,20 @@ export class AttendanceController {
   
   @Get()
   @ApiOperation({ summary: 'Finds all Attendances' })
-  async findAll() {
-    return await this.attendanceService.findAll();
+  @ApiQuery({
+    required: false,
+    name: 'event_id',
+    description: 'the ID For the Event'
+  })
+  @ApiQuery({
+    required: false,
+    name: 'status',
+    description: 'the attendance status we want to find (ALL, ABSENT, PRESENT, LATE)'
+  })
+  async findAll(
+    @Query() query?: AttendanceQueryParamDTO,
+  ) {
+    return await this.attendanceService.findAll(query);
   }
 
   @Get(':attendance_id')
@@ -25,7 +38,7 @@ export class AttendanceController {
   findById(
     @Param('attendance_id') id: string
   ) : Promise<ResponseAttendanceDTO> {
-    return this.attendanceService.findById(id)
+    return this.attendanceService.findById(id);
   }
 
   @Post()
