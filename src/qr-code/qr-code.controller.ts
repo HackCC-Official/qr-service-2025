@@ -1,6 +1,10 @@
-import { Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { QRCodeService } from "./qr-code.service";
 import { ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/auth/jwt.auth.guard";
+import { AccountRoles } from "src/auth/role.enum";
+import { Roles } from "src/auth/roles.decorator";
+import { RolesGuard } from "src/auth/roles.guard";
 
 @ApiTags('QR Codes')
 @Controller('qr-codes')
@@ -16,6 +20,8 @@ export class QrCodeController {
     description: 'ID of account',
     name: 'account_id'
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get(':account_id')
   findByAccountId(
     @Param('account_id') id: string

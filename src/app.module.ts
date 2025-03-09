@@ -12,8 +12,19 @@ import { MealModule } from './meal/meal.module';
 import { WorkshopOrganizerModule } from './workshop-organizer/workshop-organizer.module';
 import { WorkshopModule } from './workshop/workshop.module';
 import { WorkshopAttendanceModule } from './workshop-attendance/workshop-attendance.module';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { RolesGuard } from './auth/roles.guard';
+import { AuthModule } from './auth/auth.module';
+import { TokenInterceptor } from './auth/token.interceptor';
+import { HttpModule } from '@nestjs/axios';
 
 @Module({
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TokenInterceptor,
+    },
+  ],
   imports: [
     LoggerModule.forRoot({
       pinoHttp: {
@@ -38,7 +49,9 @@ import { WorkshopAttendanceModule } from './workshop-attendance/workshop-attenda
     AccountModule,
     WorkshopModule,
     WorkshopOrganizerModule,
-    WorkshopAttendanceModule
+    WorkshopAttendanceModule,
+    AuthModule,
+    HttpModule
   ],
 })
 export class AppModule {}
