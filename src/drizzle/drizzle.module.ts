@@ -13,6 +13,7 @@ import { drizzle } from 'drizzle-orm/node-postgres';
       provide: PG_CONNECTION,
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => {
+        console.log(configService.get('DATABASE_HOST'), configService.get('DATABASE_PASSWORD'), configService.get('DATABASE_HOST'), configService.get('DATABASE_DB'))
         const pool = new Pool({
           host: configService.get('DATABASE_HOST') || 'postgres',
           port: Number(configService.get('DATABASE_PORT')) || 5432,
