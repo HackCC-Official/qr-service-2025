@@ -1,8 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from "@nestjs/common";
 import { EventService } from "./event.service";
 import { RequestEventDTO } from "./response-event.dto";
 import { ResponseEventDTO } from "./request-event.dto";
 import { ApiBody, ApiOperation, ApiParam, ApiTags } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/auth/jwt.auth.guard";
+import { RolesGuard } from "src/auth/roles.guard";
+import { Roles } from "src/auth/roles.decorator";
+import { AccountRoles } from "src/auth/role.enum";
 
 @Controller('events')
 export class EventController {
@@ -11,6 +15,8 @@ export class EventController {
   ) {}
 
   @ApiOperation({ summary: 'Finds all Events' })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get()
   async findAll() {
     return await this.eventService.findAll();
@@ -21,6 +27,8 @@ export class EventController {
     description: 'a date of type string (yyyy-mm-dd) that is used to retrieve a single event',
     name: "date"
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get('/date/:date')
   async findByDateString(
     @Param('date') date: string
@@ -28,36 +36,42 @@ export class EventController {
     return await this.eventService.findByDate(date);
   }
 
-  @Get(":event_id")
   @ApiOperation({ summary: 'Finds a single event by events_id'})
   @ApiParam({
     description: 'ID of existing event',
     name: "event_id"
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  @Get(":event_id")
   async findById(
     @Param('event_id') id: string
   ) : Promise<ResponseEventDTO> {
     return await this.eventService.findById(id);
   }
 
-  @Post()
   @ApiOperation({ summary: 'Creates a new event that counts as an active date for the hackathon'})
   @ApiBody({
     description: "Event object that reflects a future active hackathon day",
     type: RequestEventDTO
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  @Post()
   async create(
     @Body() createEventDTO: RequestEventDTO
   ) : Promise<ResponseEventDTO> {
     return await this.eventService.create(createEventDTO);
   }
 
-  @Put(":event_id")
   @ApiOperation({ summary: 'Updates an existing event'})
   @ApiParam({
     description: 'ID of existing event',
     name: "event_id"
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  @Put(":event_id")
   async update(
     @Param('event_id') id: string,
     @Body() updateEventDTO: RequestEventDTO
@@ -65,12 +79,14 @@ export class EventController {
     return await this.eventService.update(id, updateEventDTO)
   }
 
-  @Delete(":event_id")
   @ApiOperation({ summary: 'Deletes an event' })
   @ApiParam({
     description: 'ID of existing event',
     name: "event_id"
   })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  @Delete(":event_id")
   async delete(
     @Param('event_id') id: string
   ) {

@@ -5,7 +5,6 @@ import { Observable, catchError, firstValueFrom } from "rxjs";
 import { AccountDTO } from "./account.dto";
 import { ConfigService } from "@nestjs/config";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
-import { Account } from "src/account-consumer/account";
 
 @Injectable()
 export class AccountService {
@@ -22,7 +21,12 @@ export class AccountService {
 
     const { data } = await firstValueFrom(
       this.httpService.get(
-        accountServiceUrl + '/accounts'
+        accountServiceUrl + '/accounts',
+        {
+          headers: {
+            Authorization: this.httpService.axiosRef.defaults.headers.common['Authorization'],
+          }
+        }
       )
       .pipe(
         catchError((error: AxiosError) => {
@@ -40,7 +44,14 @@ export class AccountService {
       this.configService.get<string>('ACCOUNT_SERVICE_URL')
 
     const { data } = await firstValueFrom(
-      this.httpService.get(accountServiceUrl + '/accounts/' + id)
+      this.httpService.get(
+        accountServiceUrl + '/accounts/' + id,
+        {
+          headers: {
+            Authorization: this.httpService.axiosRef.defaults.headers.common['Authorization'],
+          }
+        }
+      )
       .pipe(
         catchError((error: AxiosError) => {
           this.logger.error(error)
@@ -59,6 +70,9 @@ export class AccountService {
       this.httpService.get(
         accountServiceUrl + '/accounts',
         {
+          headers: {
+            Authorization: this.httpService.axiosRef.defaults.headers.common['Authorization'],
+          },
           params: {
             account_ids
           }
