@@ -55,7 +55,7 @@ services:
       exit 0;
       "
     networks:
-      - nginx_network
+    - hackcc-network
 networks:
   hackcc-network:
     external: true
