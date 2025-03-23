@@ -1,5 +1,4 @@
 import { Inject, Injectable } from "@nestjs/common";
-import * as QRCode from "qrcode";
 import { MinioService } from "src/minio-s3/minio.service";
 import { PG_CONNECTION } from "src/constants";
 import { NodePgDatabase } from "drizzle-orm/node-postgres";
@@ -7,9 +6,14 @@ import { schema } from "src/drizzle/schema";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { eq } from "drizzle-orm";
 import { RequestAccountQRDTO } from "src/drizzle/schema/account-qr";
+import { QRCodeCanvas } from '@loskir/styled-qr-code-node';
+import * as path from 'path';
+import * as fs from 'fs';
 
 @Injectable()
 export class QRCodeService {
+  private readonly logoPath = path.join(__dirname, '..', '..', 'public', 'logo.png');
+
   constructor(
     @Inject(PG_CONNECTION)
     private db: NodePgDatabase<typeof schema>,
@@ -24,7 +28,51 @@ export class QRCodeService {
   }
 
   async generateQRCode(userId: string): Promise<string> {
-    const qrCodeBuffer: Buffer = await QRCode.toBuffer(userId);
+    // Step 2: Read the logo file
+    const logo = fs.readFileSync(this.logoPath);
+
+    const qrCode: QRCodeCanvas = new QRCodeCanvas({
+      data: userId,
+      image: logo,
+      dotsOptions: {
+        type: 'rounded',
+        gradient: {
+          type: "linear",
+          rotation: 1.5707963267948966,
+          colorStops: [
+            {
+              color: '#4C27A0',
+              offset: 0
+            },
+            {
+              color: '#A649E2',
+              offset: 1
+            }
+          ]
+        }
+      },
+      cornersSquareOptions: {
+        type: 'square',
+        color: '#4C27A0',
+      },
+      cornersDotOptions: {
+        type: 'square',
+        color: '#4C27A0',
+      },
+      imageOptions: {
+        hideBackgroundDots: true,
+        imageSize: 0.7,
+        margin: 8
+      },
+      qrOptions: {
+        typeNumber: 4,
+        mode: 'Byte',
+        errorCorrectionLevel: 'Q'
+      }
+    })
+
+    const qrCodeBuffer = await qrCode.toBuffer('png');
+
     const qrCodeFilename = '/qr-codes/' + this.generateFilename(userId);
 
     await this.minioService.uploadImg(qrCodeFilename, qrCodeBuffer);
