@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty,IsString } from "class-validator";
+import { IsArray, IsNotEmpty,IsString } from "class-validator";
 import { WorkshopInsert } from "src/drizzle/schema/workshop";
 
 export class RequestWorkshopDTO implements WorkshopInsert {
@@ -23,4 +23,11 @@ export class RequestWorkshopDTO implements WorkshopInsert {
   @IsNotEmpty()
   @IsString()
   location: string;
+
+  @ApiProperty({
+    example: ['f32b54d9-c17a-4eed-b6e4-fc0e26e1a21b']
+  })
+  @IsArray()
+  @IsString({ each: true })
+  organizers: string[];
 }

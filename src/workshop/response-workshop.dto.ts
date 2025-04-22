@@ -1,6 +1,8 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsNotEmpty, IsUUID } from "class-validator";
+import { IsArray, IsNotEmpty, IsString, IsUUID } from "class-validator";
 import { WorkshopSelect } from "src/drizzle/schema/workshop";
+import { Type } from 'class-transformer';
+import { AccountDTO } from "src/account/account.dto";
 
 export class ResponseWorkshopDTO implements WorkshopSelect {
   @ApiProperty({
@@ -30,4 +32,23 @@ export class ResponseWorkshopDTO implements WorkshopSelect {
   @IsUUID()
   @IsNotEmpty()
   location: string;
+
+  @ApiProperty({
+    example: [
+      {
+        id: "43c11165-1e18-493f-8b95-e214314f9525",
+        email: "eangchheangly@gmail.com",
+        firstName: "Evan",
+        lastName: "Ly",
+        roles: [
+            "ADMIN"
+        ],
+        createdAt: "2025-03-08T00:50:55.170Z",
+        deletedAt: null
+      }
+    ]
+  })
+  @IsArray()
+  @Type(() => AccountDTO)
+  organizers: AccountDTO[];
 }
