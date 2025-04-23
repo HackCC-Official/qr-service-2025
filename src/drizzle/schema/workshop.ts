@@ -20,7 +20,7 @@ export type WorkshopInsert = typeof workshops.$inferInsert;
 export const workshop_organizers = pgTable('workshop_organizers', {
   id: uuid().defaultRandom().primaryKey(),
   account_id: varchar(),
-  workshop_id: varchar()
+  workshop_id: uuid().references(() => workshops.id) 
 })
 
 export const workshop_organizersRelationship = relations(workshop_organizers, ({ one }) => ({

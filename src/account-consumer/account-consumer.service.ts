@@ -52,7 +52,6 @@ export class AccountConsumerService implements OnModuleInit {
             if (message) {
               try {
                 const content: Account = JSON.parse(message.content.toString());
-        
                 // Example processing logic that might fail
                 const qrCodeURL = await this.qrService.generateQRCode(content.id);
                 const qrCodeObj = await this.qrService.create({
@@ -68,6 +67,7 @@ export class AccountConsumerService implements OnModuleInit {
               } catch (error) {
                 // Log the error for debugging
                 this.logger.error('Failed to process message', error);
+                console.log("ERROR", error)
         
                 // Nack the message to indicate failure
                 // true -> requeue the message, false -> dead-letter the message (if configured)

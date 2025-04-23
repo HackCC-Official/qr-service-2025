@@ -75,7 +75,19 @@ export class AccountService {
           },
           params: {
             account_ids
-          }
+          },
+          paramsSerializer: (params) => {
+            const searchParams = new URLSearchParams()
+            for (const key in params) {
+              const value = params[key]
+              if (Array.isArray(value)) {
+                searchParams.append(key, value.join(','))
+              } else {
+                searchParams.append(key, value)
+              }
+            }
+            return searchParams.toString()
+          },
         }
       )
       .pipe(

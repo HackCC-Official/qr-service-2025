@@ -8,6 +8,7 @@ services:
       - '${PORT}:3000'
     volumes:
     - .:/usr/src/app
+    - /usr/src/app/node_modules    # Exclude host node_modules
     # Run in Debug Mode: npm run start:debug --> Don't forget to start your vscode debugger!
     # Run in dev Mode: npm run start:dev
     command: npm run start:dev
