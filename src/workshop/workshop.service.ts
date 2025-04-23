@@ -139,13 +139,19 @@ export class WorkshopService {
   }
 
   async delete(workshopId: string) {
-    const [workshop] = await this
-      .db
-      .delete(schema.workshops)
-      .where(eq(schema.workshops.id, workshopId))
-      .returning()
+    const workshop = await this.db.transaction(async tx => {
+        await tx
+          .delete(schema.workshop_organizers)
+          .where(eq(schema.workshop_organizers.workshop_id, workshopId))
+          .returning()
+        const [workshop] = await tx
+          .delete(schema.workshops)
+          .where(eq(schema.workshops.id, workshopId))
+          .returning()
+        return workshop;
+      })
 
-    this.logger.info({ msg: 'Updating workshop', workshop })
+    this.logger.info({ msg: 'Deleting workshop', workshop })
 
     return workshop;
   }
