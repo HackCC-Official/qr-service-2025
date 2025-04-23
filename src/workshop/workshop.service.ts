@@ -60,13 +60,19 @@ export class WorkshopService {
         .insert(schema.workshops)
         .values(workshop)
         .returning({ workshopId: schema.workshops.id})
+
+      const accounts = await this.accountService.batchFindById(organizers);
+
+      if (accounts.length !== organizers.length) {
+        throw new Error('one or more account not found')
+      }
       
       organizers.forEach(async o => {
         await tx
         .insert(schema.workshop_organizers)
         .values({
           workshop_id: workshopResult.workshopId,
-          organizer_id: o
+          account_id: o
         })
       })
 
