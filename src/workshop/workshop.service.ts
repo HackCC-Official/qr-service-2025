@@ -28,7 +28,7 @@ export class WorkshopService {
     return Promise.all( 
         workshop.map(async ({ workshop_organizers, ...workshop}) => {
         const organizerIds = workshop_organizers.map(o => o.account_id);
-        const accounts = await this.accountService.batchFindById(organizerIds);
+        const accounts = organizerIds.length > 0 ? await this.accountService.batchFindById(organizerIds) : [];
         return {
           ...workshop,
           organizers: accounts
@@ -46,7 +46,9 @@ export class WorkshopService {
     });
     
     const organizerIds = workshop_organizers.map(o => o.account_id);
-    const accounts = await this.accountService.batchFindById(organizerIds);
+    console.log(organizerIds)
+    const accounts = organizerIds.length > 0 ? await this.accountService.batchFindById(organizerIds) : [];
+    console.log(accounts)
     return {
       ...workshop,
       organizers: accounts
