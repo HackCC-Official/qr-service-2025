@@ -29,10 +29,20 @@ export class QrCodeController {
     return this.qrCodeService.findByAccountId(id);
   }
 
+  @ApiOperation({
+    summary: 'Regenerate a QR COde for everyone else'
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN])
+  @Post('regen')
+  async regenAllQRCodes() {
+    return this.qrCodeService.regenerateQr();
+  }
+
   // @Post(':id')
   // async createQrCode(
   //   @Param('id') userId: string
   // ) {
-  //   return this.qrService.generateQRCode(userId);
+  //   return this.qrCodeService.generateQRCode(userId);
   // }
 }

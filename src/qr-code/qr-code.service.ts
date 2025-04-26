@@ -97,6 +97,37 @@ export class QRCodeService {
     this.logger.info({ msg: 'Creating QR Code for Account ID: ' + accountQR[0].account_id, accountQR });
   }
 
+  async regenerateQr() {
+    await this.db.transaction(async tx => {
+      // get all qr code
+      const accountQRs = await tx
+        .query
+        .accountQRs
+        .findMany();
+
+    // generate new QR URLs (fix: await Promise.all)
+    const replacementAccountQRs = await Promise.all(
+      accountQRs.map(async qr => {
+        const qrCodeURL = await this.generateQRCode(String(qr.account_id));
+        return {
+          id: qr.id,    // make sure id is included
+          url: qrCodeURL
+        };
+      })
+    );  
+
+    // Now batch update
+    await Promise.all(
+      replacementAccountQRs.map(qr =>
+        tx
+        .update(schema.accountQRs)
+        .set({ url: qr.url })
+        .where(eq(schema.accountQRs.id, String(qr.id)))
+      )
+    );
+    })
+  }
+
   async deleteByAccountId(accountId: string) {
     return this.db
       .delete(schema.accountQRs)
