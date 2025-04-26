@@ -61,8 +61,8 @@ export class QRCodeService {
       },
       imageOptions: {
         hideBackgroundDots: true,
-        imageSize: 0.7,
-        margin: 8
+        imageSize: 0.4,
+        margin: 2
       },
       qrOptions: {
         typeNumber: 4,

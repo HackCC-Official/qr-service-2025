@@ -23,4 +23,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Command to run the application with drizzle-kit migration
-CMD ["sh", "-c", "npx drizzle-kit generate && npx drizzle-kit push && node dist/src/main"]
+CMD ["sh", "-c", "npx drizzle-kit generate && npx drizzle-kit push:pg --yes && node dist/src/main"]
