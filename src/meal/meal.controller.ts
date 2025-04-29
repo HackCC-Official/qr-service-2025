@@ -16,7 +16,7 @@ export class MealController {
     private mealService: MealService
   ) {}
 
-  @ApiOperation({ summary: 'Get users by event_id and mealStatus (if empty, then get user with unclaimed meals)'})
+  @ApiOperation({ summary: 'Get accounts by event_id and mealType (if empty, then get user with unclaimed meals)'})
   @ApiQuery({
     required: true,
     name: 'event_id',
@@ -24,16 +24,16 @@ export class MealController {
   })
   @ApiQuery({
     required: false,
-    name: 'mealStatus',
+    name: 'mealSType',
     description: 'the meal status/type we want to check for. Do not set if we want to track unclaimed meals for current meal status (BREAKFAST, LUNCH, DINNER)'
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get()
-  async getUserByEventIdAndMealStatus(
+  async getAccountsByEventIDAndMealType(
     @Query() query: MealQueryParamDTO,
   ): Promise<ResponseMealAccountDTO[]> {
-    return this.mealService.findUsersByEventIDAndStatus(query)
+    return this.mealService.findAccountsByEventIDAndMealType(query)
   }
 
   @ApiOperation({ summary: 'Claim a meal for the hackathon participant'})

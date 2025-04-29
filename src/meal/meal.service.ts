@@ -108,17 +108,17 @@ export class MealService {
     }
   }
 
-  async findUsersByEventIDAndStatus(query: MealQueryParamDTO): Promise<ResponseMealAccountDTO[]> {
-    const { event_id, mealStatus } = query;
+  async findAccountsByEventIDAndMealType(query: MealQueryParamDTO): Promise<ResponseMealAccountDTO[]> {
+    const { event_id, mealType } = query;
     let meals: ResponseMealAccountDTO[] = [];
     const event = await this.eventService.findById(event_id);
 
-    if (!mealStatus) {
-      // get currentHour and MealStatus
+    if (!mealType) {
+      // get currentHour and MealType
       const currentHour = this.getHourAtPST();
-      const currentMealStatus = this.getMealType(currentHour);
+      const currentMealType = this.getMealType(currentHour);
 
-      // if it's today, get meal by event_id and currentMealStatus
+      // if it's today, get meal by event_id and currentMealType
       // otherwise get it only by event_id
       const mealsObj =
         this.isTodayPST(event.date)
@@ -130,7 +130,7 @@ export class MealService {
         .findMany({ 
           where: and(
             eq(schema.meals.event_id, query && query.event_id ? event_id : null),
-            eq(schema.meals.mealType, query && query.mealStatus ? currentMealStatus : null)
+            eq(schema.meals.mealType, query && query.mealType ? currentMealType : null)
           ) 
         })
         :
@@ -175,7 +175,7 @@ export class MealService {
       .findMany({ 
         where: and(
           eq(schema.meals.event_id, event_id),
-          eq(schema.meals.mealType, mealStatus)
+          eq(schema.meals.mealType, mealType)
         ) 
       })
 
