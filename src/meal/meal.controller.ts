@@ -24,7 +24,7 @@ export class MealController {
   })
   @ApiQuery({
     required: false,
-    name: 'mealSType',
+    name: 'mealsType',
     description: 'the meal status/type we want to check for. Do not set if we want to track unclaimed meals for current meal status (BREAKFAST, LUNCH, DINNER)'
   })
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -33,7 +33,7 @@ export class MealController {
   async getAccountsByEventIDAndMealType(
     @Query() query: MealQueryParamDTO,
   ): Promise<ResponseMealAccountDTO[]> {
-    return this.mealService.findAccountsByEventIDAndMealType(query)
+    return this.mealService.findAll(query)
   }
 
   @ApiOperation({ summary: 'Claim a meal for the hackathon participant'})
