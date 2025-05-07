@@ -7,7 +7,8 @@ export enum MealType {
   BREAKFAST = 'BREAKFAST',
   LUNCH = 'LUNCH',
   DINNER = 'DINNER',
-  UNCLAIMED = 'UNCLAIMED'
+  UNCLAIMED = 'UNCLAIMED',
+  ALL = 'ALL',
 }
 
 export const MealTypeEnum = pgEnum('mealType', enumToPgEnum(MealType))

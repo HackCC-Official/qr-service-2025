@@ -11,6 +11,7 @@ import { ResponseMealDTO } from "./response-meal.dto";
 import { MealType } from "src/drizzle/schema/meal";
 import { ResponseMealAccountDTO } from "./response-meal-account.dto";
 import { MealQueryParamDTO } from "./meal-query-param.dto";
+import { AccountDTO } from "src/account/account.dto";
 
 @Injectable()
 export class MealService {
@@ -108,91 +109,96 @@ export class MealService {
     }
   }
 
-  async findUsersByEventIDAndStatus(query: MealQueryParamDTO): Promise<ResponseMealAccountDTO[]> {
-    const { event_id, mealStatus } = query;
-    let meals: ResponseMealAccountDTO[] = [];
-    const event = await this.eventService.findById(event_id);
+  async findAll(query?: MealQueryParamDTO): Promise<ResponseMealAccountDTO[]> {
+    const whereConditions = [];
 
-    if (!mealStatus) {
-      // get currentHour and MealStatus
-      const currentHour = this.getHourAtPST();
-      const currentMealStatus = this.getMealType(currentHour);
+    const containsPhantomMeals = query.mealType === MealType.ALL || query.mealType === MealType.UNCLAIMED
 
-      // if it's today, get meal by event_id and currentMealStatus
-      // otherwise get it only by event_id
-      const mealsObj =
-        this.isTodayPST(event.date)
-        ?
-        await this
-        .db
-        .query
-        .meals
-        .findMany({ 
-          where: and(
-            eq(schema.meals.event_id, query && query.event_id ? event_id : null),
-            eq(schema.meals.mealType, query && query.mealStatus ? currentMealStatus : null)
-          ) 
-        })
-        :
-        await this
-        .db
-        .query
-        .meals
-        .findMany({ 
-          where: and(
-            eq(schema.meals.event_id, event_id)
-          ) 
-        })
-      
-      // get invalid account_ids, we want to find accounts
-      // that have not claimed any meals for current meal status
-      // for today OR any meals at all
-      const invalid_account_ids = mealsObj.map(m => m.account_id);
-      const invalid_account_sets = new Set(invalid_account_ids);
-
-      const accounts = (await this.accountService
-        .findAll())
-        .filter(a => !invalid_account_sets.has(a.id))
-
-      meals = accounts.map(account => {
-        return {
-          id: '',
-          account,
-          event_id,
-          mealType: MealType.UNCLAIMED,
-          checkedInAt: 'N/A',
-        }
-      })
-
-
-    } else
-    {
-      // get all meal status by event_id and type
-      const mealsObj = await this
-      .db
-      .query
-      .meals
-      .findMany({ 
-        where: and(
-          eq(schema.meals.event_id, event_id),
-          eq(schema.meals.mealType, mealStatus)
-        ) 
-      })
-
-      const account_ids = mealsObj.map(m => m.account_id);
-      const accounts = await this.accountService.batchFindById(account_ids)
-      const account_map = {}
-
-      accounts.forEach(a => {
-        account_map[a.id] = a;
-      })
-
-      meals = mealsObj.map(m => ({
-        ...m,
-        account: account_map[m.account_id]
-      }))
+    if (!containsPhantomMeals) {
+      whereConditions.push(eq(schema.meals.mealType, query.mealType))
     }
 
-    return meals;
+    if (query.event_id !== undefined) {
+      whereConditions.push(eq(schema.meals.event_id, query.event_id));
+    }
+
+    const meals = await this.db
+      .query
+      .meals
+      .findMany({
+        where: whereConditions.length > 0 ? and(...whereConditions) : undefined
+      })
+
+    const account_ids = meals.map(meal => meal.account_id)
+    let accounts: AccountDTO[];
+
+    if (!containsPhantomMeals) {
+      accounts = account_ids.length > 0 ? await this.accountService.batchFindById(account_ids) : [];
+    } else {
+      accounts = await this.accountService.findAll();
+    }
+
+    if (!containsPhantomMeals) {
+      const account_map = {};
+      for (const account of accounts) {
+        account_map[account.id] = account;
+      }
+      return meals.map((m) => {
+        const account_id = m.account_id as string
+        delete m.account_id
+        return {
+          ...m,
+          account: account_map[account_id]
+        }
+      })
+    } else if (query.mealType === MealType.ALL) {
+      const account_map = {}
+
+      for (const account of accounts) {
+        account_map[account.id] = account
+      }
+
+      const claimedAccountSet = new Set();
+
+      for (const account_id of account_ids) {
+        claimedAccountSet.add(account_id);
+      }
+
+      const unclaimedAccounts = accounts.filter(a => !claimedAccountSet.has(a.id))
+      return [
+        ...meals.map((m) => {
+          const account_id = m.account_id as string
+          delete m.account_id
+          return {
+            ...m,
+            account: account_map[account_id]
+          }
+        })
+        ,
+        ...unclaimedAccounts.map(a => ({
+          mealType: MealType.UNCLAIMED,
+          id: a.id,
+          account: a,
+          event_id: query.event_id || '',
+          checkedInAt: ''
+        }))
+      ]
+    } else {
+      const unclaimedAccountSet = new Set();
+
+      for (const account_id of account_ids) {
+        unclaimedAccountSet.add(account_id)
+      }
+
+      const validAccounts = accounts.filter(a => !unclaimedAccountSet.has(a.id))
+      
+      return validAccounts.map(a => ({
+        mealType: MealType.UNCLAIMED,
+        id: a.id,
+        account: a,
+        event_id: query.event_id || '',
+        checkedInAt: ''
+      }))
+    }
   }
 }

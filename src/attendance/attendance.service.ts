@@ -9,8 +9,6 @@ import { RequestAttendanceDTO } from "./request-attendance.dto";
 import { AttendanceStatus } from "src/drizzle/schema/attendance";
 import { EventService } from "src/event/event.service";
 import { AccountService } from "src/account/account.service";
-import { catchError } from "rxjs";
-import { AxiosError } from "axios";
 import { AttendanceQueryParamDTO } from "./attendance-query-param.dto";
 import { AccountDTO } from "src/account/account.dto";
 
@@ -80,20 +78,13 @@ export class AttendanceService {
         account_map[account.id] = account;
       }
 
-      const attended_account_set = new Set();
+      const attendedAccountSet = new Set();
 
       for (const account_id of account_ids) {
-        attended_account_set.add(account_id);
+        attendedAccountSet.add(account_id);
       }
 
-      const absent_accounts = accounts.filter(a => !attended_account_set.has(a.id))
-      console.log(absent_accounts.map(a => ({
-        status: AttendanceStatus.ABSENT,
-        id: a.id,
-        account: a,
-        event_id: query.event_id || '',
-        checkedInAt: ''
-      })))
+      const absentAccounts = accounts.filter(a => !attendedAccountSet.has(a.id))
       return [
         ...attendances.map((a) => {
           const account_id = a.account_id as string
@@ -104,7 +95,7 @@ export class AttendanceService {
           }
         })
         ,
-        ...absent_accounts.map(a => ({
+        ...absentAccounts.map(a => ({
           status: AttendanceStatus.ABSENT,
           id: a.id,
           account: a,
@@ -113,15 +104,15 @@ export class AttendanceService {
         }))
       ]
     } else {
-      const invalid_account_set = new Set();
+      const absentAccountSet = new Set();
 
       for (const account_id of account_ids) {
-        invalid_account_set.add(account_id);
+        absentAccountSet.add(account_id);
       }
 
-      const valid_accounts = accounts.filter(a => !invalid_account_set.has(a.id))
+      const validAccounts = accounts.filter(a => !absentAccountSet.has(a.id))
       
-      return valid_accounts.map(a => ({
+      return validAccounts.map(a => ({
         status: AttendanceStatus.ABSENT,
         id: a.id,
         account: a,
