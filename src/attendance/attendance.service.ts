@@ -11,6 +11,8 @@ import { EventService } from "src/event/event.service";
 import { AccountService } from "src/account/account.service";
 import { AttendanceQueryParamDTO } from "./attendance-query-param.dto";
 import { AccountDTO } from "src/account/account.dto";
+import { ActivityService } from "src/hack-pass/activity.service";
+import { ActivityOrigin } from "src/drizzle/schema/hack-pass";
 
 @Injectable()
 export class AttendanceService {
@@ -20,7 +22,8 @@ export class AttendanceService {
     @InjectPinoLogger(AttendanceService.name)
     private readonly logger: PinoLogger,
     private eventService: EventService,
-    private accountService: AccountService
+    private accountService: AccountService,
+    private actitvityService: ActivityService
   ) {}
 
   async findAll(query?: AttendanceQueryParamDTO) {
@@ -188,8 +191,6 @@ export class AttendanceService {
       status: AttendanceStatus.PRESENT
     }
 
-    console.log(attendanceDTO)
-
     if (!this.eventService.isValidCheckInTime(attendanceDTO.checkedInAt, event)) {
       this.logger.info({ msg: 'Invalid attendance check in time for Account ID: ' + attendanceDTO.account_id, attendanceDTO, event })
       return;
@@ -210,6 +211,15 @@ export class AttendanceService {
       .insert(schema.attendances)
       .values(attendanceDTO)
       .returning()
+
+    // this.actitvityService.rewardActivity(account.id, {
+    //   title: "Attendance!",
+    //   message: "Check into the event",
+    //   rewards: 100,
+    //   origin: ActivityOrigin.ATTENDANCE,
+    //   account_id: account.id,
+    //   rewardedAt: (new Date()).toISOString()
+    // })
 
     this.logger.info({ msg: 'Taking hacker attendance', attendance })
 

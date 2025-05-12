@@ -3,7 +3,7 @@ import { enumToPgEnum } from "src/utils/drizzle";
 
 export const progresses = pgTable('progresses', {
   id: uuid().defaultRandom().primaryKey(),
-  account_id: uuid(),
+  account_id: uuid().unique(),
   points: integer()
 })
 
@@ -24,6 +24,7 @@ export const activities = pgTable('activities', {
   message: varchar().notNull(),
   rewards: integer(),
   origin: ActivityOriginEnum(),
+  account_id: uuid(),
   rewardedAt: timestamp({ withTimezone: true, mode: 'string' })
 })
 

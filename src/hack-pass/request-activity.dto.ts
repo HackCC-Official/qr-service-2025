@@ -3,11 +3,6 @@ import { ActivityOrigin } from "src/drizzle/schema/hack-pass";
 
 export class RequestActivityAccountDTO {
   @ApiProperty({
-    example: '767e7d36-4dab-4afc-b299-d63a855c72b5'
-  })
-  id: string;
-
-  @ApiProperty({
     example: 'Wow Quest A'
   })
   title: string;
@@ -20,7 +15,7 @@ export class RequestActivityAccountDTO {
   @ApiProperty({
     example: 10
   })
-  reward: number;
+  rewards: number;
 
   @ApiProperty({
     example: ActivityOrigin.ATTENDANCE

@@ -50,6 +50,13 @@
       "when": 1746906656600,
       "tag": "0006_married_sheva_callister",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1746909426918,
+      "tag": "0007_exotic_katie_power",
+      "breakpoints": true
     }
   ]
 }

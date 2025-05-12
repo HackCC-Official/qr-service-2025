@@ -15,8 +15,7 @@ export class ProgressService {
     @Inject(PG_CONNECTION)
     private db: NodePgDatabase<typeof schema>,
     @InjectPinoLogger(ProgressService.name)
-    private readonly logger: PinoLogger,
-    private accountService: AccountService
+    private readonly logger: PinoLogger
   ) {}
 
   // get progress by account_id
@@ -28,8 +27,8 @@ export class ProgressService {
   }
 
   // create progress
-  async createProgress(account_id: string): Promise<ProgressSelect> {
-    const [progress] = await this.db
+  async createProgress(account_id: string, tx?: typeof this.db): Promise<ProgressSelect> {
+    const [progress] = await (tx ? tx :this.db)
       .insert(schema.progresses)
       .values({
         account_id,
@@ -41,22 +40,21 @@ export class ProgressService {
   }
 
   // reward progress
-  async rewardProgress(account_id: string, activity: RequestActivityAccountDTO): Promise<ProgressSelect> {
+  async rewardProgress(tx: typeof this.db, account_id: string, activity: RequestActivityAccountDTO): Promise<ProgressSelect> {
     // get progress
     let progress = await this.getProgressByAccountId(account_id);
     
     // if progress doesn't exist
     if (!progress) {
-      progress = await this.createProgress(account_id);
+      progress = await this.createProgress(account_id, tx);
       this.logger.info({ msg: 'Creating progress with id' + progress.id + 'for account_id ' + account_id})
     }
 
     // add reward to progress
-    const [rewardedProgress] = await this
-      .db
+    const [rewardedProgress] = await tx
       .update(schema.progresses)
       .set({
-        points: progress.points + activity.reward
+        points: progress.points + activity.rewards
       })
       .where(eq(schema.progresses.account_id, account_id))
       .returning();
