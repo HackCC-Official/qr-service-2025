@@ -12,7 +12,6 @@ import { AccountService } from "src/account/account.service";
 import { AttendanceQueryParamDTO } from "./attendance-query-param.dto";
 import { AccountDTO } from "src/account/account.dto";
 import { ActivityService } from "src/hack-pass/activity.service";
-import { ActivityOrigin } from "src/drizzle/schema/hack-pass";
 
 @Injectable()
 export class AttendanceService {
