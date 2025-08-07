@@ -6,5 +6,5 @@ export class MealQueryParamDTO {
   event_id: string;
 
   @IsEnum(MealType)
-  mealStatus?: MealType;
+  mealType?: MealType;
 }

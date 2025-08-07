@@ -1,5 +1,6 @@
 import { accountQRs } from "./account-qr";
 import { attendances, attendancesRelationship } from "./attendance";
+import { activities, progresses } from "./hack-pass";
 import { events, eventsRelationships } from "./event";
 import { meals, mealsRelationship } from "./meal";
 import { workshop_attendances, workshop_attendancesRelationship, workshop_organizers, workshop_organizersRelationship, workshops, workshopsRelationship } from "./workshop";
@@ -17,5 +18,7 @@ export const schema = {
   workshop_organizersRelationship,
   mealsRelationship,
   eventsRelationships,
-  attendancesRelationship
+  attendancesRelationship,
+  progresses,
+  activities
  } 

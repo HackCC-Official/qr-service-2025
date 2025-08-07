@@ -17,6 +17,7 @@ import { RolesGuard } from './auth/roles.guard';
 import { AuthModule } from './auth/auth.module';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { HttpModule } from '@nestjs/axios';
+import { HackPassModule } from './hack-pass/hack-pass.module';
 
 @Module({
   providers: [
@@ -50,6 +51,7 @@ import { HttpModule } from '@nestjs/axios';
     WorkshopModule,
     WorkshopOrganizerModule,
     WorkshopAttendanceModule,
+    HackPassModule,
     AuthModule,
     HttpModule
   ],
