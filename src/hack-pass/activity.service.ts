@@ -33,7 +33,7 @@ export class ActivityService {
     // check if account exists
     const account = this.accountService.findById(account_id);
 
-    // if account doesn't exists
+    // if account doesn't exist
     if (!account) {
       throw new Error('account with id ' + account_id + ' not found');
     }
