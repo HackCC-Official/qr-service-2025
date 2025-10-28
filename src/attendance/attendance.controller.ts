@@ -49,6 +49,26 @@ export class AttendanceController {
     return this.attendanceService.findById(id);
   }
 
+  @ApiOperation({ summary: 'Finds a single Attendance by account_id and event_id'})
+  @ApiParam({
+    description: 'ID of the existing account',
+    name: 'account_id'
+  })
+  @ApiParam({
+    description: 'ID of the existing event',
+    name: 'event_id'
+  })
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
+  @Get('event/:event_id/account/:account_id')
+  findBEventIdAndAccountId(
+    @Param('event_id') event_id: string,
+    @Param('account_id') account_id: string
+  ) : Promise<ResponseAttendanceDTO> {
+    return this.attendanceService.findByEventIDAndAccountID(event_id, account_id);
+  }
+
+
   @ApiOperation({ summary: 'Take a hacker\'s attendance' })
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([AccountRoles.ADMIN, AccountRoles.ORGANIZER])
