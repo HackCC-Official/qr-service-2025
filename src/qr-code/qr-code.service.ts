@@ -9,6 +9,7 @@ import { RequestAccountQRDTO } from "src/drizzle/schema/account-qr";
 import { QRCodeCanvas } from '@loskir/styled-qr-code-node';
 import * as path from 'path';
 import * as fs from 'fs';
+import { AccountService } from "src/account/account.service";
 
 @Injectable()
 export class QRCodeService {
@@ -20,6 +21,7 @@ export class QRCodeService {
     @InjectPinoLogger(QRCodeService.name)
     private readonly logger: PinoLogger,
     private minioService: MinioService,
+    private accountService: AccountService
   ) {}
 
   generateFilename(userId: string) {
@@ -99,33 +101,43 @@ export class QRCodeService {
 
   async regenerateQr() {
     await this.db.transaction(async tx => {
-      // get all qr code
-      const accountQRs = await tx
-        .query
-        .accountQRs
-        .findMany();
-
-    // generate new QR URLs (fix: await Promise.all)
-    const replacementAccountQRs = await Promise.all(
-      accountQRs.map(async qr => {
-        const qrCodeURL = await this.generateQRCode(String(qr.account_id));
-        return {
-          id: qr.id,    // make sure id is included
-          url: qrCodeURL
-        };
-      })
-    );  
-
-    // Now batch update
-    await Promise.all(
-      replacementAccountQRs.map(qr =>
-        tx
-        .update(schema.accountQRs)
-        .set({ url: qr.url })
-        .where(eq(schema.accountQRs.id, String(qr.id)))
-      )
-    );
-    })
+      // Get all accounts
+      const accounts = await this.accountService.findAll();
+      
+      // Get existing QR records
+      const existingQRs = await tx.query.accountQRs.findMany();
+      
+      // Create a map of existing QRs by account_id for quick lookup
+      const existingQRMap = new Map(
+        existingQRs.map(qr => [qr.account_id, qr])
+      );
+      
+      // Process each account
+      await Promise.all(
+        accounts.map(async account => {
+          // Generate QR code for this account
+          const qrCodeURL = await this.generateQRCode(String(account.id));
+          
+          const existingQR = existingQRMap.get(String(account.id));
+          
+          if (existingQR) {
+            // Update existing QR record
+            await tx
+              .update(schema.accountQRs)
+              .set({ url: qrCodeURL })
+              .where(eq(schema.accountQRs.id, String(existingQR.id)));
+          } else {
+            // Insert new QR record
+            await tx
+              .insert(schema.accountQRs)
+              .values({
+                url: qrCodeURL,
+                account_id: String(account.id)
+              });
+          }
+        })
+      );
+    });
   }
 
   async deleteByAccountId(accountId: string) {
