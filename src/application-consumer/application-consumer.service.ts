@@ -5,12 +5,15 @@ import { ConfirmChannel } from "amqplib";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { QRCodeService } from "src/qr-code/qr-code.service";
 import { Account } from "./account";
+import { application, Application } from "express";
+import { ApplicationDTO } from "./application";
+import { AccountDTO } from "src/account/account.dto";
 
 @Injectable()
-export class AccountConsumerService implements OnModuleInit {
+export class ApplicationConsumerService implements OnModuleInit {
   private channelWrapper: ChannelWrapper;
   
-  @InjectPinoLogger(AccountConsumerService.name)
+  @InjectPinoLogger(ApplicationConsumerService.name)
   private readonly logger: PinoLogger;
 
   constructor(
@@ -18,11 +21,11 @@ export class AccountConsumerService implements OnModuleInit {
     private qrService: QRCodeService,
   ) {
     const connection = amqp.connect(this.configService.get<string>('RABBITMQ_URL'));
-    console.log(this.configService.get<string>('RABBITMQ_URL'))
+    const exchange = configService.get<string>('APPLICATION_EXCHANGE');
     this.channelWrapper = connection.createChannel({
       setup: (channel: Channel) => {
         return channel.assertExchange(
-          configService.get<string>('ACCOUNT_EXCHANGE'),
+          exchange,
           'topic', 
           {
             durable: true 
@@ -34,36 +37,45 @@ export class AccountConsumerService implements OnModuleInit {
 
   async onModuleInit() {
     try {
-      // CREATED
-
-      
+      const exchange = this.configService.get<string>('APPLICATION_EXCHANGE');
+      const queue = this.configService.get<string>('APPLICATION_QUEUE');
       await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
-        // DELETE
-        const deleteAccountQueue = await channel.assertQueue('account_queue', { durable: true, deadLetterExchange: 'dead-letter-exchange' })
+        const createApplicationQueue = await channel.assertQueue(queue, { durable: true, deadLetterExchange: 'dead-letter-exchange' })
 
         await channel.bindQueue(
-          deleteAccountQueue.queue,
-          this.configService.get<string>('ACCOUNT_EXCHANGE'),
-          'account.delete'
+          createApplicationQueue.queue,
+          exchange,
+          'application.accepted'
         );
 
         await channel.consume(
-          deleteAccountQueue.queue,
+          createApplicationQueue.queue,
+          // HANDLER FOR RECEIVING MESSAGE, ADD CODE HERE!!
           async (message) => {
             if (message) {
               try {
-                const content: Account = JSON.parse(message.content.toString());
-
-                const qrCodeObj = await this.qrService.deleteByAccountId(content.id);
-
+                const content: ApplicationDTO = JSON.parse(message.content.toString());
+                const account: AccountDTO = content.user;
+                // Example processing logic that might fail
+                const qrCodeURL = await this.qrService.generateQRCode(account.id);
+                console.log(account, {
+                  account_id: account.id,
+                  url: qrCodeURL,
+                })
+                const qrCodeObj = await this.qrService.create({
+                  account_id: account.id,
+                  url: qrCodeURL,
+                });
+        
                 // Acknowledge the message after successful processing
                 channel.ack(message);
-
-                this.logger.info('account id: ' + content.id);
-                this.logger.info('processed delete qr-code object', qrCodeObj);
+                
+                this.logger.info('account id: ' + account.id);
+                this.logger.info('processed created qr-code object', qrCodeObj);
               } catch (error) {
                 // Log the error for debugging
                 this.logger.error('Failed to process message', error);
+                console.log("ERROR", error)
         
                 // Nack the message to indicate failure
                 // true -> requeue the message, false -> dead-letter the message (if configured)

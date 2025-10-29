@@ -55,6 +55,33 @@ export class MealService {
       .findFirst({ where: and(eq(schema.meals.event_id, event_id), eq(schema.meals.account_id, account_id)) });
   }
 
+  async findByAccountIDAndEventIdAndMealType(account_id: string, event_id: string, mealType: MealType) : Promise<ResponseMealAccountDTO> {
+    console.log(account_id)
+    const account = await this.accountService.findById(account_id);
+    const meal = await this.db
+      .query
+      .meals
+      .findFirst({ where: and(eq(schema.meals.account_id, account_id), eq(schema.meals.event_id, event_id), eq(schema.meals.mealType, mealType)) });
+
+    if (!meal) {
+      return {
+        id: '',
+        account,
+        event_id: event_id,
+        mealType: MealType.UNCLAIMED,
+        checkedInAt: null
+      }
+    }
+
+    return {
+      id: meal.id,
+      event_id: meal.event_id,
+      mealType: meal.mealType,
+      checkedInAt: meal.checkedInAt,
+      account
+    }
+  }
+
   async findByEventID(event_id: string) : Promise<ResponseMealDTO[]> {
     return this.db
       .query

@@ -147,15 +147,19 @@ export class AttendanceService {
       .attendances
       .findFirst({ where: and(eq(schema.attendances.event_id, event_id), eq(schema.attendances.account_id, account_id)) });
     
-    if (!attendance) {
-      return null;
-    }
+    const account = await this.accountService.findById(account_id)
 
-    const account = await this.accountService.findById(attendance.account_id)
-    
-    if (attendance) {
-      delete attendance.account_id;
+    if (!attendance) {
+      return {
+        status: AttendanceStatus.ABSENT,
+        id: null,
+        account,
+        event_id: event_id,
+        checkedInAt: null
+      }
     }
+    
+    delete attendance.account_id;
 
     return {
       ...attendance,
@@ -167,8 +171,8 @@ export class AttendanceService {
     const event = await this.eventService.findById(requestAttendanceDTO.event_id);
     const account = await this.accountService.findById(requestAttendanceDTO.account_id)
     const attendanceExists = await this.findByEventIDAndAccountID(requestAttendanceDTO.event_id, requestAttendanceDTO.account_id)
-
-    if (attendanceExists) {
+    console.log(attendanceExists)
+    if (attendanceExists && (attendanceExists.status === AttendanceStatus.PRESENT || attendanceExists.status === AttendanceStatus.LATE)) {
       this.logger.error("Account with ID " + requestAttendanceDTO.account_id + " already checked in.");
       throw new Error("Account with ID " + requestAttendanceDTO.account_id + " already checked in.");
     }

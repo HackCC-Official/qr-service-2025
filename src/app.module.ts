@@ -4,7 +4,7 @@ import { EventModule } from './event/event.module';
 import { LoggerModule } from 'nestjs-pino';
 import { MinioModule } from './minio-s3/minio.module';
 import { QRCodeModule } from './qr-code/qr-code.module';
-import { AccountConsumerModule } from './account-consumer/account-consumer.module';
+import { ApplicationConsumerModule } from './application-consumer/application-consumer.module';
 import { ConfigModule } from '@nestjs/config';
 import { AttendanceModule } from './attendance/attendance.module';
 import { AccountModule } from './account/account.module';
@@ -18,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
 import { TokenInterceptor } from './auth/token.interceptor';
 import { HttpModule } from '@nestjs/axios';
 import { HackPassModule } from './hack-pass/hack-pass.module';
+import { AccountConsumerModule } from './account-consumer/account-consumer.module';
 
 @Module({
   providers: [
@@ -44,6 +45,7 @@ import { HackPassModule } from './hack-pass/hack-pass.module';
     EventModule,
     MinioModule,
     QRCodeModule,
+    ApplicationConsumerModule,
     AccountConsumerModule,
     AttendanceModule,
     MealModule,
