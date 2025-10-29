@@ -53,34 +53,34 @@ export class ApplicationConsumerService implements OnModuleInit {
           // HANDLER FOR RECEIVING MESSAGE, ADD CODE HERE!!
           async (message) => {
             if (message) {
-              try {
-                const content: ApplicationDTO = JSON.parse(message.content.toString());
-                const account: AccountDTO = content.user;
-                // Example processing logic that might fail
-                const qrCodeURL = await this.qrService.generateQRCode(account.id);
-                console.log(account, {
-                  account_id: account.id,
-                  url: qrCodeURL,
-                })
-                const qrCodeObj = await this.qrService.create({
-                  account_id: account.id,
-                  url: qrCodeURL,
-                });
+              // try {
+              //   const content: ApplicationDTO = JSON.parse(message.content.toString());
+              //   const account: AccountDTO = content.user;
+              //   // Example processing logic that might fail
+              //   const qrCodeURL = await this.qrService.generateQRCode(account.id);
+              //   console.log(account, {
+              //     account_id: account.id,
+              //     url: qrCodeURL,
+              //   })
+              //   const qrCodeObj = await this.qrService.create({
+              //     account_id: account.id,
+              //     url: qrCodeURL,
+              //   });
         
-                // Acknowledge the message after successful processing
-                channel.ack(message);
+              //   // Acknowledge the message after successful processing
+              //   channel.ack(message);
                 
-                this.logger.info('account id: ' + account.id);
-                this.logger.info('processed created qr-code object', qrCodeObj);
-              } catch (error) {
-                // Log the error for debugging
-                this.logger.error('Failed to process message', error);
-                console.log("ERROR", error)
+              //   this.logger.info('account id: ' + account.id);
+              //   this.logger.info('processed created qr-code object', qrCodeObj);
+              // } catch (error) {
+              //   // Log the error for debugging
+              //   this.logger.error('Failed to process message', error);
+              //   console.log("ERROR", error)
         
-                // Nack the message to indicate failure
-                // true -> requeue the message, false -> dead-letter the message (if configured)
-                channel.nack(message, false, false); // (message, all = false, requeue = true)
-              }
+              //   // Nack the message to indicate failure
+              //   // true -> requeue the message, false -> dead-letter the message (if configured)
+              //   channel.nack(message, false, false); // (message, all = false, requeue = true)
+              // }
             }
           }
         )
