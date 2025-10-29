@@ -3,7 +3,7 @@ import { NodePgDatabase } from "drizzle-orm/node-postgres";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { PG_CONNECTION } from "src/constants";
 import { schema } from "src/drizzle/schema";
-import { WorkshopAttendanceQueryParamDTO } from "./wrokshop-attendance-query-param.dto";
+import { WorkshopAttendanceQueryParamDTO } from "./workshop-attendance-query-param.dto";
 import { and, eq } from "drizzle-orm";
 import { RequestWorkshopAttendanceDTO } from "./request-workshop-attendance.dto";
 import { ResponseWorkshopAttendanceDTO } from "./response-workshop-attendance.dto";

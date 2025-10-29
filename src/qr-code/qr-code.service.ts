@@ -75,11 +75,11 @@ export class QRCodeService {
 
     const qrCodeBuffer = await qrCode.toBuffer('png');
 
-    const qrCodeFilename = '/qr-codes/' + this.generateFilename(userId);
+    const qrCodeFilename = 'qr-codes/' + this.generateFilename(userId);
 
     await this.minioService.uploadImg(qrCodeFilename, qrCodeBuffer);
-
-    return process.env.MINIO_BUCKET_NAME + qrCodeFilename;
+    console.log(qrCodeFilename)
+    return qrCodeFilename;
   }
 
   async findByAccountId(accountId: string) {

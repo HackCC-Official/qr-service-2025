@@ -5,12 +5,14 @@ import { JwtAuthGuard } from "src/auth/jwt.auth.guard";
 import { AccountRoles } from "src/auth/role.enum";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
+import { MinioService } from "src/minio-s3/minio.service";
 
 @ApiTags('QR Codes')
 @Controller('qr-codes')
 export class QrCodeController {
   constructor(
-    private qrCodeService: QRCodeService
+    private qrCodeService: QRCodeService,
+    private minioService: MinioService
   ) {}
 
   @ApiOperation({
@@ -23,10 +25,12 @@ export class QrCodeController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get(':account_id')
-  findByAccountId(
+  async findByAccountId(
     @Param('account_id') id: string
   ) {
-    return this.qrCodeService.findByAccountId(id);
+    const qrCode = await this.qrCodeService.findByAccountId(id);
+    qrCode.url = await this.minioService.presignedUrl(qrCode.url);
+    return qrCode;
   }
 
   @ApiOperation({

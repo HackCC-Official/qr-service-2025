@@ -15,4 +15,13 @@ export class MinioService {
       file
     )
   }
+
+  async presignedUrl(filename: string, expirySeconds: number = 3600) : Promise<string> {
+    return await this.minioClient.presignedGetObject(
+      process.env.MINIO_BUCKET_NAME,
+      filename,
+      expirySeconds,
+      { 'response-content-disposition': 'inline' } 
+    );
+  }
 }

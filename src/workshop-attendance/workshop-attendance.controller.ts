@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, UseGuards } from "@nestjs/common";
 import { WorkshopAttendanceService } from "./workshop-attendance.service";
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from "@nestjs/swagger";
-import { WorkshopAttendanceQueryParamDTO } from "./wrokshop-attendance-query-param.dto";
+import { WorkshopAttendanceQueryParamDTO } from "./workshop-attendance-query-param.dto";
 import { ResponseWorkshopAttendanceDTO } from "./response-workshop-attendance.dto";
 import { RequestWorkshopAttendanceDTO } from "./request-workshop-attendance.dto";
 import { JwtAuthGuard } from "src/auth/jwt.auth.guard";

@@ -26,6 +26,7 @@ export class AttendanceService {
   ) {}
 
   async findAll(query?: AttendanceQueryParamDTO) {
+    console.log("QUERY", query)
     const whereConditions = [];
 
     if (query.status !== undefined && query.status !== AttendanceStatus.ABSENT && query.status !== AttendanceStatus.ALL) {
@@ -52,7 +53,7 @@ export class AttendanceService {
     const account_ids = attendances.map(a => a.account_id) as string[]
     let accounts: AccountDTO[];
 
-    if (query.status === AttendanceStatus.PRESENT || query.status === AttendanceStatus.LATE) {
+    if ((query.status === AttendanceStatus.PRESENT || query.status === AttendanceStatus.LATE) && account_ids.length > 0) {
       accounts = await this.accountService.batchFindById(account_ids);
     } else {
       accounts = await this.accountService.findAll();
@@ -64,7 +65,8 @@ export class AttendanceService {
       for (const account of accounts) {
         account_map[account.id] = account;
       }
-
+      
+      console.log('hey')
       return attendances.map((a) => {
         const account_id = a.account_id as string
         delete a.account_id
