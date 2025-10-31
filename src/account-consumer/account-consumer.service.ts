@@ -41,12 +41,14 @@ export class AccountConsumerService implements OnModuleInit {
         const accountExchange = this.configService.get<string>('ACCOUNT_EXCHANGE');
         const accountQueue = this.configService.get<string>('ACCOUNT_QUEUE');
 
-        const accountQueueInstance = await channel.assertQueue('account_queue', { durable: true, deadLetterExchange: 'dead-letter-exchange' })
+        const accountQueueInstance = await channel.assertQueue(accountQueue, { durable: true, deadLetterExchange: 'dead-letter-exchange' })
         await channel.bindQueue(
           accountQueueInstance.queue,
           accountExchange,
-          'account.created'
+          'account.create'
         );
+        
+        console.log(accountQueueInstance)
 
         await channel.consume(
           accountQueueInstance.queue,
