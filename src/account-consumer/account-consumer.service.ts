@@ -54,23 +54,19 @@ export class AccountConsumerService implements OnModuleInit {
           async (message) => {
             if (message) {
               try {
-                const content: ApplicationDTO = JSON.parse(message.content.toString());
-                const account: AccountDTO = content.user;
+                const content: AccountDTO = JSON.parse(message.content.toString());
                 // Example processing logic that might fail
-                const qrCodeURL = await this.qrService.generateQRCode(account.id);
-                console.log(account, {
-                  account_id: account.id,
-                  url: qrCodeURL,
-                })
+                const qrCodeURL = await this.qrService.generateQRCode(content.id);
+  
                 const qrCodeObj = await this.qrService.create({
-                  account_id: account.id,
+                  account_id: content.id,
                   url: qrCodeURL,
                 });
         
                 // Acknowledge the message after successful processing
                 channel.ack(message);
                 
-                this.logger.info('account id: ' + account.id);
+                this.logger.info('account id: ' + content.id);
                 this.logger.info('processed created qr-code object', qrCodeObj);
               } catch (error) {
                 // Log the error for debugging
