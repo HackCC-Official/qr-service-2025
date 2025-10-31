@@ -45,7 +45,7 @@ export class ApplicationConsumerService implements OnModuleInit {
         await channel.bindQueue(
           createApplicationQueue.queue,
           exchange,
-          'application.accepted'
+          'application.accept'
         );
 
         await channel.consume(
