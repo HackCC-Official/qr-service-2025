@@ -5,7 +5,6 @@ import { ConfirmChannel } from "amqplib";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { QRCodeService } from "src/qr-code/qr-code.service";
 import { Account } from "./account";
-import { ApplicationDTO } from "src/application-consumer/application";
 import { AccountDTO } from "src/account/account.dto";
 
 @Injectable()

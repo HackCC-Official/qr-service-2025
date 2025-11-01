@@ -6,6 +6,7 @@ import { AccountRoles } from "src/auth/role.enum";
 import { Roles } from "src/auth/roles.decorator";
 import { RolesGuard } from "src/auth/roles.guard";
 import { MinioService } from "src/minio-s3/minio.service";
+import { AttendeeGuard } from "src/auth/attendee.guard";
 
 @ApiTags('QR Codes')
 @Controller('qr-codes')
@@ -22,7 +23,7 @@ export class QrCodeController {
     description: 'ID of account',
     name: 'account_id'
   })
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, AttendeeGuard)
   @Roles([AccountRoles.USER, AccountRoles.JUDGE, AccountRoles.ADMIN, AccountRoles.ORGANIZER])
   @Get(':account_id')
   async findByAccountId(

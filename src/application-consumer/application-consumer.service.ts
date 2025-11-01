@@ -4,10 +4,6 @@ import amqp, { ChannelWrapper, Channel } from 'amqp-connection-manager';
 import { ConfirmChannel } from "amqplib";
 import { InjectPinoLogger, PinoLogger } from "nestjs-pino";
 import { QRCodeService } from "src/qr-code/qr-code.service";
-import { Account } from "./account";
-import { application, Application } from "express";
-import { ApplicationDTO } from "./application";
-import { AccountDTO } from "src/account/account.dto";
 
 @Injectable()
 export class ApplicationConsumerService implements OnModuleInit {

@@ -19,6 +19,7 @@ import { TokenInterceptor } from './auth/token.interceptor';
 import { HttpModule } from '@nestjs/axios';
 import { HackPassModule } from './hack-pass/hack-pass.module';
 import { AccountConsumerModule } from './account-consumer/account-consumer.module';
+import { ApplicationModule } from './application/application.module';
 
 @Module({
   providers: [
@@ -54,6 +55,7 @@ import { AccountConsumerModule } from './account-consumer/account-consumer.modul
     WorkshopOrganizerModule,
     WorkshopAttendanceModule,
     HackPassModule,
+    ApplicationModule,
     AuthModule,
     HttpModule
   ],

@@ -3,12 +3,12 @@ require('dotenv').config({
 })
 import type { Config } from 'drizzle-kit';
 
-const { DATABASE_HOST, DATABASE_PORT, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DB } = process.env
+const { DATABASE_EXTERNAL_HOST, DATABASE_EXTERNAL_PORT, DATABASE_USER, DATABASE_PASSWORD, DATABASE_DB } = process.env
 export default {
   out: './drizzle',
   schema: './src/drizzle/schema',
   dialect: 'postgresql',
   dbCredentials: {
-    url: `postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_DB}`
+    url: `postgres://${DATABASE_USER}:${DATABASE_PASSWORD}@${DATABASE_EXTERNAL_HOST}:${DATABASE_EXTERNAL_PORT}/${DATABASE_DB}`
   },
 } satisfies Config
