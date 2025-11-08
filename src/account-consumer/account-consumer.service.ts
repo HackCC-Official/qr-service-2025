@@ -36,84 +36,60 @@ export class AccountConsumerService implements OnModuleInit {
   async onModuleInit() {
     try {      
       await this.channelWrapper.addSetup(async (channel: ConfirmChannel) => {
-        // DELETE
         const accountExchange = this.configService.get<string>('ACCOUNT_EXCHANGE');
-        const accountQueue = this.configService.get<string>('ACCOUNT_QUEUE');
-
-        const accountQueueInstance = await channel.assertQueue(accountQueue, { durable: true, deadLetterExchange: 'dead-letter-exchange' })
-        await channel.bindQueue(
-          accountQueueInstance.queue,
-          accountExchange,
-          'account.create'
-        );
         
-        console.log(accountQueueInstance)
-
-        await channel.consume(
-          accountQueueInstance.queue,
-          // HANDLER FOR RECEIVING MESSAGE, ADD CODE HERE!!
-          async (message) => {
-            if (message) {
-              try {
-                const content: AccountDTO = JSON.parse(message.content.toString());
-                // Example processing logic that might fail
-                const qrCodeURL = await this.qrService.generateQRCode(content.id);
-  
-                const qrCodeObj = await this.qrService.create({
-                  account_id: content.id,
-                  url: qrCodeURL,
-                });
+        // CREATE QUEUE
+        const createQueue = await channel.assertQueue('account.create.queue', { 
+          durable: true, 
+          deadLetterExchange: 'dead-letter-exchange' 
+        });
         
-                // Acknowledge the message after successful processing
-                channel.ack(message);
-                
-                this.logger.info('account id: ' + content.id);
-                this.logger.info('processed created qr-code object', qrCodeObj);
-              } catch (error) {
-                // Log the error for debugging
-                this.logger.error('Failed to process message', error);
-                console.log("ERROR", error)
+        await channel.bindQueue(createQueue.queue, accountExchange, 'account.create');
         
-                // Nack the message to indicate failure
-                // true -> requeue the message, false -> dead-letter the message (if configured)
-                channel.nack(message, false, false); // (message, all = false, requeue = true)
-              }
+        await channel.consume(createQueue.queue, async (message) => {
+          if (message) {
+            try {
+              const content: AccountDTO = JSON.parse(message.content.toString());
+              const qrCodeURL = await this.qrService.generateQRCode(content.id);
+              const qrCodeObj = await this.qrService.create({
+                account_id: content.id,
+                url: qrCodeURL,
+              });
+              
+              channel.ack(message);
+              this.logger.info('account id: ' + content.id);
+              this.logger.info('processed created qr-code object', qrCodeObj);
+            } catch (error) {
+              this.logger.error('Failed to process create message', error);
+              channel.nack(message, false, false);
             }
           }
-        )
+        });
 
-        await channel.bindQueue(
-          accountQueueInstance.queue,
-          this.configService.get<string>('ACCOUNT_EXCHANGE'),
-          'account.delete'
-        );
-
-        await channel.consume(
-          accountQueueInstance.queue,
-          async (message) => {
-            if (message) {
-              try {
-                const content: Account = JSON.parse(message.content.toString());
-
-                const qrCodeObj = await this.qrService.deleteByAccountId(content.id);
-
-                // Acknowledge the message after successful processing
-                channel.ack(message);
-
-                this.logger.info('account id: ' + content.id);
-                this.logger.info('processed delete qr-code object', qrCodeObj);
-              } catch (error) {
-                // Log the error for debugging
-                this.logger.error('Failed to process message', error);
+        // DELETE QUEUE
+        const deleteQueue = await channel.assertQueue('account.delete.queue', { 
+          durable: true, 
+          deadLetterExchange: 'dead-letter-exchange' 
+        });
         
-                // Nack the message to indicate failure
-                // true -> requeue the message, false -> dead-letter the message (if configured)
-                channel.nack(message, false, false); // (message, all = false, requeue = true)
-              }
+        await channel.bindQueue(deleteQueue.queue, accountExchange, 'account.delete');
+        
+        await channel.consume(deleteQueue.queue, async (message) => {
+          if (message) {
+            try {
+              const content: Account = JSON.parse(message.content.toString());
+              const qrCodeObj = await this.qrService.deleteByAccountId(content.id);
+              
+              channel.ack(message);
+              this.logger.info('account id: ' + content.id);
+              this.logger.info('processed delete qr-code object', qrCodeObj);
+            } catch (error) {
+              this.logger.error('Failed to process delete message', error);
+              channel.nack(message, false, false);
             }
           }
-        )
-      })
+        });
+      });
     } catch (error) {
       this.logger.info("Account consumer error", error);
       throw new HttpException(
