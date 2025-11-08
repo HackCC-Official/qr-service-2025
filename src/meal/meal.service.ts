@@ -165,19 +165,34 @@ export class MealService {
       accounts = await this.accountService.findAll();
     }
 
+    const defaultAccount = {
+      id: '',
+      email: '',
+      firstName: '',
+      lastName: '',
+      roles: [],
+      createdAt: null,
+      deletedAt: null,
+      isJudging: false,
+    };
+
+
     if (!containsPhantomMeals) {
       const account_map = {};
       for (const account of accounts) {
         account_map[account.id] = account;
       }
       return meals.map((m) => {
-        const account_id = m.account_id as string
-        delete m.account_id
+        const account_id = (m.account_id || "").trim();
+
+        delete m.account_id;
+
         return {
           ...m,
-          account: account_map[account_id]
-        }
-      })
+          account: account_id ? account_map[account_id] : defaultAccount
+        };
+      });
+
     } else if (query.mealType === MealType.ALL) {
       const account_map = {}
 
@@ -194,12 +209,13 @@ export class MealService {
       const unclaimedAccounts = accounts.filter(a => !claimedAccountSet.has(a.id))
       return [
         ...meals.map((m) => {
-          const account_id = m.account_id as string
-          delete m.account_id
+          const account_id = (m.account_id || "").trim();
+          delete m.account_id;
+
           return {
             ...m,
-            account: account_map[account_id]
-          }
+            account: account_id ? account_map[account_id] : defaultAccount
+          };
         })
         ,
         ...unclaimedAccounts.map(a => ({
